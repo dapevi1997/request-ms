@@ -1,7 +1,7 @@
 package co.com.crediya.model.solicitud;
 
-import co.com.crediya.model.utils.ValidationUtils;
 import java.math.BigDecimal;
+import co.com.crediya.model.utils.ValidationUtils;
 
 public class Solicitud {
     private Long idSolicitud;
@@ -11,16 +11,17 @@ public class Solicitud {
     private Long idEstado;
     private Long idTipoPrestamo;
 
-    public Solicitud(){}
+    public Solicitud() {}
 
-    public Solicitud(Long idSolicitud, BigDecimal monto, Integer plazo, String email, Long idEstado, Long idTipoPrestamo) {
+    public Solicitud(Long idSolicitud, BigDecimal monto, Integer plazo, String email, Long idEstado,
+            Long idTipoPrestamo) {
         ValidationUtils.validatePositiveLong(idSolicitud, "El ID de la solicitud");
         ValidationUtils.validatePositiveBigDecimal(monto, "El monto");
         ValidationUtils.validatePositiveInteger(plazo, "El plazo");
         ValidationUtils.validateEmail(email, "El email");
         ValidationUtils.validatePositiveLong(idEstado, "El ID del estado");
         ValidationUtils.validatePositiveLong(idTipoPrestamo, "El ID del tipo de préstamo");
-        
+
         this.idSolicitud = idSolicitud;
         this.monto = monto;
         this.plazo = plazo;
@@ -79,13 +80,8 @@ public class Solicitud {
 
     @Override
     public String toString() {
-        return "Estados{" +
-                "idSolicitud=" + idSolicitud +
-                ", monto='" + monto + '\'' +
-                ", plazo='" + plazo + '\'' +
-                ", email='" + email + '\'' +
-                ", idEstado=" + idEstado +
-                ", idTipoPrestamo=" + idTipoPrestamo +
-                '}';
+        return "Estados{" + "idSolicitud=" + idSolicitud + ", monto='" + monto + '\'' + ", plazo='"
+                + plazo + '\'' + ", email='" + email + '\'' + ", idEstado=" + idEstado
+                + ", idTipoPrestamo=" + idTipoPrestamo + '}';
     }
 }

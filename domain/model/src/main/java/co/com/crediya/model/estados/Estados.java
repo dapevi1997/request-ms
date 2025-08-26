@@ -11,7 +11,7 @@ public class Estados {
         ValidationUtils.validatePositiveLong(idEstado, "El ID del estado");
         ValidationUtils.validateNotNullString(nombre, "El nombre del estado");
         ValidationUtils.validateNotNullString(descripcion, "La descripción del estado");
-        
+
         this.idEstado = idEstado;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -43,10 +43,7 @@ public class Estados {
 
     @Override
     public String toString() {
-        return "Estados{" +
-                "idEstado=" + idEstado +
-                ", nombre='" + nombre + '\'' +
-                ", descripcion='" + descripcion + '\'' +
-                '}';
+        return "Estados{" + "idEstado=" + idEstado + ", nombre='" + nombre + '\''
+                + ", descripcion='" + descripcion + '\'' + '}';
     }
 }
