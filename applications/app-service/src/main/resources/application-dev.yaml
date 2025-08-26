@@ -27,3 +27,11 @@ springdoc:
     path: "/api-docs"
     groups:
       enabled: true
+adapters:
+  r2dbc:
+    host: "localhost"
+    port: 3306
+    database: "authentication"
+    schema: "init-config-database-dev.sql"
+    username: "user"
+    password: "password"
