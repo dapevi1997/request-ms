@@ -1,5 +1,6 @@
 package co.com.crediya.model.tipoprestamo;
 
+import co.com.crediya.model.utils.ValidationUtils;
 import java.math.BigDecimal;
 
 public class TipoPrestamo {
@@ -12,6 +13,13 @@ public class TipoPrestamo {
     public TipoPrestamo(){}
 
     public TipoPrestamo(Long idTipoPrestamo, String nombre, BigDecimal montoMaximo, BigDecimal montoMinimo, BigDecimal tasaInteres, Boolean validacionAutomatica) {
+        ValidationUtils.validatePositiveLong(idTipoPrestamo, "El ID del tipo de préstamo");
+        ValidationUtils.validateNotNullString(nombre, "El nombre del tipo de préstamo");
+        ValidationUtils.validatePositiveBigDecimal(montoMaximo, "El monto máximo");
+        ValidationUtils.validatePositiveBigDecimal(montoMinimo, "El monto mínimo");
+        ValidationUtils.validateNonNegativeBigDecimal(tasaInteres, "La tasa de interés");
+        ValidationUtils.validateNotNullBoolean(validacionAutomatica, "El indicador de validación automática");
+        
         this.idTipoPrestamo = idTipoPrestamo;
         this.nombre = nombre;
         this.montoMaximo = montoMaximo;

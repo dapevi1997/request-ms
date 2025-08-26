@@ -1,5 +1,6 @@
 package co.com.crediya.model.solicitud;
 
+import co.com.crediya.model.utils.ValidationUtils;
 import java.math.BigDecimal;
 
 public class Solicitud {
@@ -13,6 +14,13 @@ public class Solicitud {
     public Solicitud(){}
 
     public Solicitud(Long idSolicitud, BigDecimal monto, Integer plazo, String email, Long idEstado, Long idTipoPrestamo) {
+        ValidationUtils.validatePositiveLong(idSolicitud, "El ID de la solicitud");
+        ValidationUtils.validatePositiveBigDecimal(monto, "El monto");
+        ValidationUtils.validatePositiveInteger(plazo, "El plazo");
+        ValidationUtils.validateEmail(email, "El email");
+        ValidationUtils.validatePositiveLong(idEstado, "El ID del estado");
+        ValidationUtils.validatePositiveLong(idTipoPrestamo, "El ID del tipo de préstamo");
+        
         this.idSolicitud = idSolicitud;
         this.monto = monto;
         this.plazo = plazo;
