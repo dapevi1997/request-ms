@@ -28,6 +28,7 @@ public class Solicitud {
         this.email = email;
         this.idEstado = idEstado;
         this.idTipoPrestamo = idTipoPrestamo;
+        this.documentoIdentidad = documentoIdentidad;
     }
 
     public Solicitud(Long idSolicitud, BigDecimal monto, Integer plazo, String email, String documentoIdentidad, Long idEstado,

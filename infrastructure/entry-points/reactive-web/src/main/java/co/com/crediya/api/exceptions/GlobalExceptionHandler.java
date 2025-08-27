@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerCodecConfigurer;
@@ -16,6 +17,7 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 
 @Component
+@Order(-2)
 public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
     private final Map<Class<? extends Exception>, HttpStatus> exceptionToStatusCode;
     private final HttpStatus defaultStatus;
@@ -43,6 +45,7 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
         switch (error.getClass().getSimpleName()) {
             case "InvalidEntityException":
             case "BadRequestException":
+            case "ServerWebInputException":
                 httpStatus = HttpStatus.BAD_REQUEST;
                 break;
             case "DomainException":

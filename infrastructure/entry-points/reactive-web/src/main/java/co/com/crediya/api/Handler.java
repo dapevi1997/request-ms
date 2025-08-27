@@ -35,6 +35,7 @@ public class Handler {
 
     public Mono<ServerResponse> registroSolicitudPrestamo(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(SolicitudRequestDto.class)
+                .doOnError(error -> log.error("Error al leer el cuerpo de la solicitud: {}", error.getMessage()))
                 .flatMap(this::validateRequest)
                 .map(solicitudRequestDto -> objectMapper.map(solicitudRequestDto, Solicitud.class))
                 .flatMap(enviarSolicitudPrestamoUseCase::guardarSolicitud)
