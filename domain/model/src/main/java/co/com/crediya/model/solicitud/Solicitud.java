@@ -11,7 +11,22 @@ public class Solicitud {
     private Long idEstado;
     private Long idTipoPrestamo;
 
-    public Solicitud() {}
+    private Solicitud() {}
+
+    public Solicitud(BigDecimal monto, Integer plazo, String email, Long idEstado,
+                     Long idTipoPrestamo) {
+        ValidationUtils.validatePositiveBigDecimal(monto, "El monto");
+        ValidationUtils.validatePositiveInteger(plazo, "El plazo");
+        ValidationUtils.validateEmail(email, "El email");
+        ValidationUtils.validatePositiveLong(idEstado, "El ID del estado");
+        ValidationUtils.validatePositiveLong(idTipoPrestamo, "El ID del tipo de préstamo");
+
+        this.monto = monto;
+        this.plazo = plazo;
+        this.email = email;
+        this.idEstado = idEstado;
+        this.idTipoPrestamo = idTipoPrestamo;
+    }
 
     public Solicitud(Long idSolicitud, BigDecimal monto, Integer plazo, String email, Long idEstado,
             Long idTipoPrestamo) {
