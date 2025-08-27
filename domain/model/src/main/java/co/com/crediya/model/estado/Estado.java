@@ -1,6 +1,6 @@
 package co.com.crediya.model.estado;
 
-import co.com.crediya.model.utils.ValidationUtils;
+import co.com.crediya.model.utils.ValidacionesDominio;
 
 public class Estado {
     private Long idEstado;
@@ -11,9 +11,9 @@ public class Estado {
     }
 
     public Estado(Long idEstado, String nombre, String descripcion) {
-        ValidationUtils.validatePositiveLong(idEstado, "El ID del estado");
-        ValidationUtils.validateNotNullString(nombre, "El nombre del estado");
-        ValidationUtils.validateNotNullString(descripcion, "La descripción del estado");
+        ValidacionesDominio.validarPositivo(idEstado, "El ID del estado");
+        ValidacionesDominio.validarNoNullOVacio(nombre, "El nombre del estado");
+        ValidacionesDominio.validarNoNullOVacio(descripcion, "La descripción del estado");
 
         this.idEstado = idEstado;
         this.nombre = nombre;

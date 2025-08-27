@@ -1,7 +1,7 @@
 package co.com.crediya.model.solicitud;
 
 import java.math.BigDecimal;
-import co.com.crediya.model.utils.ValidationUtils;
+import co.com.crediya.model.utils.ValidacionesDominio;
 
 public class Solicitud {
     private Long idSolicitud;
@@ -16,12 +16,12 @@ public class Solicitud {
 
     public Solicitud(BigDecimal monto, Integer plazo, String email, String documentoIdentidad, Long idEstado,
                      Long idTipoPrestamo) {
-        ValidationUtils.validateNotNullString(documentoIdentidad, "El documento de identidad"); ;;
-        ValidationUtils.validatePositiveBigDecimal(monto, "El monto");
-        ValidationUtils.validatePositiveInteger(plazo, "El plazo");
-        ValidationUtils.validateEmail(email, "El email");
-        ValidationUtils.validatePositiveLong(idEstado, "El ID del estado");
-        ValidationUtils.validatePositiveLong(idTipoPrestamo, "El ID del tipo de préstamo");
+        ValidacionesDominio.validarNoNullOVacio(documentoIdentidad, "El documento de identidad"); ;;
+        ValidacionesDominio.validarNoNegativo(monto, "El monto");
+        ValidacionesDominio.validarPositivo(plazo, "El plazo");
+        ValidacionesDominio.validarEmail(email, "El email");
+        ValidacionesDominio.validarPositivo(idEstado, "El ID del estado");
+        ValidacionesDominio.validarPositivo(idTipoPrestamo, "El ID del tipo de préstamo");
 
         this.monto = monto;
         this.plazo = plazo;
@@ -33,12 +33,12 @@ public class Solicitud {
     public Solicitud(Long idSolicitud, BigDecimal monto, Integer plazo, String email, String documentoIdentidad, Long idEstado,
                      Long idTipoPrestamo) {
         this.documentoIdentidad = documentoIdentidad;
-        ValidationUtils.validatePositiveLong(idSolicitud, "El ID de la solicitud");
-        ValidationUtils.validatePositiveBigDecimal(monto, "El monto");
-        ValidationUtils.validatePositiveInteger(plazo, "El plazo");
-        ValidationUtils.validateEmail(email, "El email");
-        ValidationUtils.validatePositiveLong(idEstado, "El ID del estado");
-        ValidationUtils.validatePositiveLong(idTipoPrestamo, "El ID del tipo de préstamo");
+        ValidacionesDominio.validarPositivo(idSolicitud, "El ID de la solicitud");
+        ValidacionesDominio.validarNoNegativo(monto, "El monto");
+        ValidacionesDominio.validarPositivo(plazo, "El plazo");
+        ValidacionesDominio.validarEmail(email, "El email");
+        ValidacionesDominio.validarPositivo(idEstado, "El ID del estado");
+        ValidacionesDominio.validarPositivo(idTipoPrestamo, "El ID del tipo de préstamo");
 
         this.idSolicitud = idSolicitud;
         this.monto = monto;
