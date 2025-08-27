@@ -18,6 +18,7 @@ import reactor.core.publisher.Mono;
 public class OpenApiDocs {
     @Operation(
             operationId = "registroSolicitudPrestamo",
+            tags = "Solicitudes de préstamo",
             summary = "Registrar una nueva solicitud de préstamo",
             requestBody = @RequestBody(
                     useParameterTypeSchema = true,

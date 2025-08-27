@@ -10,6 +10,10 @@ dependencies {
     runtimeOnly('org.springframework.boot:spring-boot-devtools')
     testImplementation 'com.tngtech.archunit:archunit:1.4.1'
     testImplementation 'com.fasterxml.jackson.core:jackson-databind'
+    compileOnly "org.projectlombok:lombok:1.18.38"
+    annotationProcessor  "org.projectlombok:lombok:1.18.38"
+    testCompileOnly  "org.projectlombok:lombok:1.18.38"
+    testAnnotationProcessor  "org.projectlombok:lombok:1.18.38"
 }
 
 tasks.register('explodedJar', Copy) {

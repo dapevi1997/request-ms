@@ -27,7 +27,7 @@ public class UseCasesConfigTest {
     }
 
     @Configuration
-    @Import(UseCasesConfig.class)
+    //@Import(UseCasesConfig.class)
     static class TestConfig {
 
         @Bean
