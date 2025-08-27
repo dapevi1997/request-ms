@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS solicitud (
     monto DECIMAL(15,2) NOT NULL,
     plazo INT NOT NULL,
     email VARCHAR(255) NOT NULL,  -- Aumento tamaño para mayor flexibilidad
+    documento_identidad VARCHAR(255) NOT NULL,
     id_estado BIGINT NOT NULL,  -- Cambio a BIGINT
     id_tipo_prestamo BIGINT NOT NULL,  -- Cambio a BIGINT
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -58,7 +59,7 @@ CREATE TABLE IF NOT EXISTS solicitud (
 
 -- Insertar datos iniciales para estados
 INSERT IGNORE INTO estados (id_estado, nombre, descripcion) VALUES
-(1, 'PENDIENTE', 'Solicitud pendiente de revisión'),
+(1, 'PENDIENTE_DE_REVISION', 'Solicitud pendiente de revisión'),
 (2, 'EN_REVISION', 'Solicitud en proceso de revisión'),
 (3, 'APROBADA', 'Solicitud aprobada'),
 (4, 'RECHAZADA', 'Solicitud rechazada'),

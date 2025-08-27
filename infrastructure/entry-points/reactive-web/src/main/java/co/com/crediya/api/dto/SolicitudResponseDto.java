@@ -1,15 +1,11 @@
 package co.com.crediya.api.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 @Schema(description = "DTO para solicitar un préstamo")
-public class SolicitarPrestamoResponseDto implements Serializable {
+public class SolicitudResponseDto implements Serializable {
 
     @Schema(description = "Email del solicitante", examples = "usuario@ejemplo.com")
     private String email;
@@ -22,6 +18,9 @@ public class SolicitarPrestamoResponseDto implements Serializable {
 
     @Schema(description = "Estampa de tiempo de la solicitud", examples = "1256564414")
     private final String timestamp = String.valueOf(System.currentTimeMillis());
+
+    @Schema(description = "Documento de identidad del cliente", examples = "12345678")
+    private String documentoIdentidad;
 
 
     public String getEmail() {
@@ -52,6 +51,14 @@ public class SolicitarPrestamoResponseDto implements Serializable {
         return timestamp;
     }
 
+    public String getDocumentoIdentidad() {
+        return documentoIdentidad;
+    }
+
+    public void setDocumentoIdentidad(String documentoIdentidad) {
+        this.documentoIdentidad = documentoIdentidad;
+    }
+
     @Override
     public String toString() {
         return "SolicitarPrestamoResponseDto{" +
@@ -59,6 +66,7 @@ public class SolicitarPrestamoResponseDto implements Serializable {
                 ", idPrestamo=" + idPrestamo +
                 ", mensaje='" + mensaje + '\'' +
                 ", timestamp='" + timestamp + '\'' +
+                ", documentoIdentidad='" + documentoIdentidad + '\'' +
                 '}';
     }
 }

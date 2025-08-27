@@ -8,13 +8,15 @@ public class Solicitud {
     private BigDecimal monto;
     private Integer plazo;
     private String email;
+    private String documentoIdentidad;
     private Long idEstado;
     private Long idTipoPrestamo;
 
-    private Solicitud() {}
+    public Solicitud() {}
 
-    public Solicitud(BigDecimal monto, Integer plazo, String email, Long idEstado,
+    public Solicitud(BigDecimal monto, Integer plazo, String email, String documentoIdentidad, Long idEstado,
                      Long idTipoPrestamo) {
+        ValidationUtils.validateNotNullString(documentoIdentidad, "El documento de identidad"); ;;
         ValidationUtils.validatePositiveBigDecimal(monto, "El monto");
         ValidationUtils.validatePositiveInteger(plazo, "El plazo");
         ValidationUtils.validateEmail(email, "El email");
@@ -28,8 +30,9 @@ public class Solicitud {
         this.idTipoPrestamo = idTipoPrestamo;
     }
 
-    public Solicitud(Long idSolicitud, BigDecimal monto, Integer plazo, String email, Long idEstado,
-            Long idTipoPrestamo) {
+    public Solicitud(Long idSolicitud, BigDecimal monto, Integer plazo, String email, String documentoIdentidad, Long idEstado,
+                     Long idTipoPrestamo) {
+        this.documentoIdentidad = documentoIdentidad;
         ValidationUtils.validatePositiveLong(idSolicitud, "El ID de la solicitud");
         ValidationUtils.validatePositiveBigDecimal(monto, "El monto");
         ValidationUtils.validatePositiveInteger(plazo, "El plazo");
@@ -93,10 +96,24 @@ public class Solicitud {
         this.idTipoPrestamo = idTipoPrestamo;
     }
 
+    public String getDocumentoIdentidad() {
+        return documentoIdentidad;
+    }
+
+    public void setDocumentoIdentidad(String documentoIdentidad) {
+        this.documentoIdentidad = documentoIdentidad;
+    }
+
     @Override
     public String toString() {
-        return "Estados{" + "idSolicitud=" + idSolicitud + ", monto='" + monto + '\'' + ", plazo='"
-                + plazo + '\'' + ", email='" + email + '\'' + ", idEstado=" + idEstado
-                + ", idTipoPrestamo=" + idTipoPrestamo + '}';
+        return "Solicitud{" +
+                "idSolicitud=" + idSolicitud +
+                ", monto=" + monto +
+                ", plazo=" + plazo +
+                ", email='" + email + '\'' +
+                ", documentoIdentidad='" + documentoIdentidad + '\'' +
+                ", idEstado=" + idEstado +
+                ", idTipoPrestamo=" + idTipoPrestamo +
+                '}';
     }
 }

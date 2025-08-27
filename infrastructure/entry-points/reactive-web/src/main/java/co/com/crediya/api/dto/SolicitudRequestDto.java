@@ -2,16 +2,18 @@ package co.com.crediya.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Schema(description = "DTO para solicitar un préstamo")
-public class SolicitarPrestamoRequestDto implements Serializable {
+public class SolicitudRequestDto implements Serializable {
+    @NotBlank(message = "El documento de identidad no puede estar vacío")
+    @NotNull(message = "El documento de identidad no puede ser nulo")
+    @JsonProperty("documento_identidad")
+    @Schema(description = "Documento de identidad del cliente", examples = "12345678")
+    private String documentoIdentidad;
 
     @JsonProperty("monto")
     @NotNull(message = "El campo monto no puede ser nulo")
@@ -70,9 +72,22 @@ public class SolicitarPrestamoRequestDto implements Serializable {
         this.idTipoPrestamo = idTipoPrestamo;
     }
 
+    public String getDocumentoIdentidad() {
+        return documentoIdentidad;
+    }
+
+    public void setDocumentoIdentidad(String documentoIdentidad) {
+        this.documentoIdentidad = documentoIdentidad;
+    }
+
     @Override
     public String toString() {
-        return "SolicitarPrestamoRequestDto{" + "monto=" + monto + ", plazo=" + plazo + ", email='"
-                + email + '\'' + ", idTipoPrestamo=" + idTipoPrestamo + '}';
+        return "SolicitarPrestamoRequestDto{" +
+                "documentoIdentidad='" + documentoIdentidad + '\'' +
+                ", monto=" + monto +
+                ", plazo=" + plazo +
+                ", email='" + email + '\'' +
+                ", idTipoPrestamo=" + idTipoPrestamo +
+                '}';
     }
 }

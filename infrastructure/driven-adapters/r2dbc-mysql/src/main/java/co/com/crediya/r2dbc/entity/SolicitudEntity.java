@@ -25,6 +25,9 @@ public class SolicitudEntity {
     @Column("email")
     private String email;
 
+    @Column("documento_identidad")
+    private String documentoIdentidad;
+
     @Column("id_estado")
     private Long idEstado;
 
@@ -91,10 +94,24 @@ public class SolicitudEntity {
         this.idTipoPrestamo = idTipoPrestamo;
     }
 
+    public String getDocumentoIdentidad() {
+        return documentoIdentidad;
+    }
+
+    public void setDocumentoIdentidad(String documentoIdentidad) {
+        this.documentoIdentidad = documentoIdentidad;
+    }
+
     @Override
     public String toString() {
-        return "SolicitudEntity{" + "idSolicitud=" + idSolicitud + ", monto=" + monto + ", plazo="
-                + plazo + ", email='" + email + '\'' + ", idEstado=" + idEstado
-                + ", idTipoPrestamo=" + idTipoPrestamo + '}';
+        return "SolicitudEntity{" +
+                "idSolicitud=" + idSolicitud +
+                ", monto=" + monto +
+                ", plazo=" + plazo +
+                ", email='" + email + '\'' +
+                ", documentoIdentidad='" + documentoIdentidad + '\'' +
+                ", idEstado=" + idEstado +
+                ", idTipoPrestamo=" + idTipoPrestamo +
+                '}';
     }
 }
