@@ -1,12 +1,19 @@
 apply plugin: 'org.springframework.boot'
 
 dependencies {
+	implementation 'org.reactivecommons.utils:object-mapper:0.1.0'
+	implementation project(':r2dbc-mysql')
+	implementation project(':reactive-web')
     implementation project(':model')
     implementation project(':usecase')
     implementation 'org.springframework.boot:spring-boot-starter'
     runtimeOnly('org.springframework.boot:spring-boot-devtools')
     testImplementation 'com.tngtech.archunit:archunit:1.4.1'
     testImplementation 'com.fasterxml.jackson.core:jackson-databind'
+    compileOnly "org.projectlombok:lombok:1.18.38"
+    annotationProcessor  "org.projectlombok:lombok:1.18.38"
+    testCompileOnly  "org.projectlombok:lombok:1.18.38"
+    testAnnotationProcessor  "org.projectlombok:lombok:1.18.38"
 }
 
 tasks.register('explodedJar', Copy) {
@@ -23,4 +30,3 @@ bootJar {
     // Sets output jar name
     archiveFileName = "${project.getParent().getName()}.${archiveExtension.get()}"
 }
-
