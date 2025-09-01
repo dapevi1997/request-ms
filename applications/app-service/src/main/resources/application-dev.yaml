@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
 spring:
   application:
     name: "RequestMS"
@@ -32,10 +32,13 @@ adapters:
     host: "localhost"
     port: 3306
     database: "solicitudes"
-    schema: "init-config-database-dev.sql"
-    username: "user"
+    schema: "V1__init-config-database-dev.sql"
+    username: "root"
     password: "password"
 flyway:
   enabled: true
   baseline-on-migrate: true
   locations: "classpath:db/migration"
+jwt:
+  secret: a-string-secret-at-least-256-bits-long
+  expiration: 3600

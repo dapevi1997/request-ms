@@ -5,7 +5,8 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 
 import co.com.crediya.api.exceptions.GlobalExceptionHandler;
-import co.com.crediya.api.exceptions.OtherBeans;
+import co.com.crediya.api.handler.SolicitudesHandler;
+import co.com.crediya.api.router.SolicitudesRouterRest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,10 +26,10 @@ import co.com.crediya.model.solicitud.Solicitud;
 import co.com.crediya.usecase.enviarsolicitudprestamo.EnviarSolicitudPrestamoUseCase;
 import reactor.core.publisher.Mono;
 
-@ContextConfiguration(classes = {RouterRest.class, Handler.class,
-        RouterRestTest.TestConfig.class, GlobalExceptionHandler.class, OtherBeans.class})
+@ContextConfiguration(classes = {SolicitudesRouterRest.class, SolicitudesHandler.class,
+        SolicitudesRouterRestTest.TestConfig.class, GlobalExceptionHandler.class, OtherBeans.class})
 @WebFluxTest
-class RouterRestTest {
+class SolicitudesRouterRestTest {
 
     @Autowired
     private WebTestClient webTestClient;

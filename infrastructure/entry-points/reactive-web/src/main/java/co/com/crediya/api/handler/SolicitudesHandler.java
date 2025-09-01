@@ -1,4 +1,4 @@
-package co.com.crediya.api;
+package co.com.crediya.api.handler;
 
 import co.com.crediya.api.dto.SolicitudRequestDto;
 import co.com.crediya.api.dto.SolicitudResponseDto;
@@ -22,12 +22,12 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class Handler {
+public class SolicitudesHandler {
     private final Validator validator;
     private final ObjectMapper objectMapper;
     private  final EnviarSolicitudPrestamoUseCase enviarSolicitudPrestamoUseCase;
 
-    public Handler(Validator validator, ObjectMapper objectMapper, EnviarSolicitudPrestamoUseCase enviarSolicitudPrestamoUseCase) {
+    public SolicitudesHandler(Validator validator, ObjectMapper objectMapper, EnviarSolicitudPrestamoUseCase enviarSolicitudPrestamoUseCase) {
         this.validator = validator;
         this.objectMapper = objectMapper;
         this.enviarSolicitudPrestamoUseCase = enviarSolicitudPrestamoUseCase;

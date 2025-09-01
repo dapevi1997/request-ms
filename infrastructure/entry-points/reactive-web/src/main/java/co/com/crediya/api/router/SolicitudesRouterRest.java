@@ -1,6 +1,7 @@
-package co.com.crediya.api;
+package co.com.crediya.api.router;
 
-import co.com.crediya.api.swaggerutil.OpenApiDocs;
+import co.com.crediya.api.handler.SolicitudesHandler;
+import co.com.crediya.api.openapi.SolicitudesOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -11,9 +12,9 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 import static org.springdoc.webflux.core.fn.SpringdocRouteBuilder.route;
 
 @Configuration
-public class RouterRest {
+public class SolicitudesRouterRest {
     @Bean
-    public RouterFunction<ServerResponse> routerFunction(Handler handler) {
-        return route().POST("/api/v1/solicitud", accept(MediaType.APPLICATION_JSON), handler::registroSolicitudPrestamo, ops -> ops.beanClass(OpenApiDocs.class).beanMethod("solicitarPrestamoOperacion")).build();
+    public RouterFunction<ServerResponse> routerFunction(SolicitudesHandler solicitudesHandler) {
+        return route().POST("/api/v1/solicitud", accept(MediaType.APPLICATION_JSON), solicitudesHandler::registroSolicitudPrestamo, SolicitudesOpenApi::registroSolicitudPrestamo).build();
     }
 }
