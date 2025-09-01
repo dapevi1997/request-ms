@@ -61,4 +61,32 @@ public class SolicitudesOpenApi {
                         .content(contentBuilder().mediaType(MediaType.APPLICATION_JSON_VALUE)
                                 .schema(schemaBuilder().implementation(ErrorResponseDto.class))));
     }
+
+    public Builder listadoSolicitudes(Builder builder) {
+        return builder
+                .operationId("listadoSolicitudes")
+                .tag("Lista de solicitudes")
+                .summary("Obtener lista de solicitudes")
+
+                // requestBody
+                .requestBody(requestBodyBuilder()
+                        .required(true)
+                        .description("Json asociado a la request")
+                        .content(contentBuilder().mediaType(MediaType.APPLICATION_JSON_VALUE)
+                                .schema(schemaBuilder().implementation(SolicitudRequestDto.class))))
+
+                // 201 Created
+                .response(responseBuilder()
+                        .responseCode(CREATED_CODE)
+                        .description("Solicitud creada correctamente")
+                        .content(contentBuilder().mediaType(MediaType.APPLICATION_JSON_VALUE)
+                                .schema(schemaBuilder().implementation(SolicitudResponseDto.class))))
+
+                // 500 Internal Server Error
+                .response(responseBuilder()
+                        .responseCode(INTERNAL_ERROR_CODE)
+                        .description("Error interno del servidor")
+                        .content(contentBuilder().mediaType(MediaType.APPLICATION_JSON_VALUE)
+                                .schema(schemaBuilder().implementation(ErrorResponseDto.class))));
+    }
 }

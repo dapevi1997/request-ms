@@ -9,9 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
-import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
 import static org.springdoc.webflux.core.fn.SpringdocRouteBuilder.route;
+import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 
 @Configuration
 public class SolicitudesRouterRest {
@@ -23,11 +22,7 @@ public class SolicitudesRouterRest {
 
     @Bean
     public RouterFunction<ServerResponse> routerFunction(SolicitudesHandler solicitudesHandler) {
-        return route().POST("/api/v1/solicitud",
-                        accept(MediaType.APPLICATION_JSON),
-                        solicitudesHandler::registroSolicitudPrestamo,
-                        SolicitudesOpenApi::registroSolicitudPrestamo)
-                .build()
-               .filter(filter);
+        return route().POST("/api/v1/solicitud", accept(MediaType.APPLICATION_JSON), solicitudesHandler::registroSolicitudPrestamo, SolicitudesOpenApi::registroSolicitudPrestamo).build().filter(filter);
+                //.andRoute(GET("/api/v1/solicitud"),solicitudesHandler::listadoSolicitudes, SolicitudesOpenApi::listadoSolicitudes);
     }
 }

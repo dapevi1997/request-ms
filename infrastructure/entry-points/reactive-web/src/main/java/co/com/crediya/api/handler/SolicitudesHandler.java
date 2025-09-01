@@ -70,4 +70,8 @@ public class SolicitudesHandler {
             return solicitudRequestDto;
         });
     }
+
+    public Mono<ServerResponse> listadoSolicitudes(ServerRequest serverRequest) {
+        return null;
+    }
 }
