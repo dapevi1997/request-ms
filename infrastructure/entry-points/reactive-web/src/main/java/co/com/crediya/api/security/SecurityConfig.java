@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.HttpMessageWriter;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,7 +50,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http){
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, ValidacionEmailFilter validacionEmailFilter){
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
@@ -82,6 +83,7 @@ public class SecurityConfig {
                         .pathMatchers(HttpMethod.POST, Constantes.URL_SOLICITAR_CREDITO).hasAnyRole(CLIENT.name())
                         .anyExchange().authenticated()
                 )
+                //.addFilterAfter(validacionEmailFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();
     }
 }
