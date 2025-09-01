@@ -5,9 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.math.BigDecimal;
-
-import co.com.crediya.model.exceptions.InvalidEntityException;
 import org.junit.jupiter.api.Test;
+import co.com.crediya.model.exceptions.InvalidEntityException;
 
 class SolicitudTest {
     @Test
@@ -139,5 +138,36 @@ class SolicitudTest {
         assertThrows(InvalidEntityException.class, () -> {
             new Solicitud(monto, plazo, email, documentoIdentidad, idEstado, idTipoPrestamo);
         });
+    }
+
+    @Test
+    void gettersYSettersFuncionanCorrectamente() {
+        // Arrange
+        Solicitud solicitud = new Solicitud();
+        Long idSolicitud = 10L;
+        BigDecimal monto = new BigDecimal("12345");
+        Integer plazo = 24;
+        String email = "test@correo.com";
+        String documentoIdentidad = "99999999";
+        Long idEstado = 2L;
+        Long idTipoPrestamo = 3L;
+
+        // Act
+        solicitud.setIdSolicitud(idSolicitud);
+        solicitud.setMonto(monto);
+        solicitud.setPlazo(plazo);
+        solicitud.setEmail(email);
+        solicitud.setDocumentoIdentidad(documentoIdentidad);
+        solicitud.setIdEstado(idEstado);
+        solicitud.setIdTipoPrestamo(idTipoPrestamo);
+
+        // Assert
+        assertEquals(idSolicitud, solicitud.getIdSolicitud());
+        assertEquals(monto, solicitud.getMonto());
+        assertEquals(plazo, solicitud.getPlazo());
+        assertEquals(email, solicitud.getEmail());
+        assertEquals(documentoIdentidad, solicitud.getDocumentoIdentidad());
+        assertEquals(idEstado, solicitud.getIdEstado());
+        assertEquals(idTipoPrestamo, solicitud.getIdTipoPrestamo());
     }
 }

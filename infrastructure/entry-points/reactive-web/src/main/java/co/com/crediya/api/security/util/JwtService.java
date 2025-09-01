@@ -3,13 +3,17 @@ package co.com.crediya.api.security.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
@@ -18,6 +22,28 @@ public class JwtService {
 
     public JwtService(JwtProperties jwtProperties) {
         this.jwtProperties = jwtProperties;
+    }
+
+    public String generateToken(UserDetails userPrincipal){
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", userPrincipal.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList()));
+
+        return createToken(claims, userPrincipal.getUsername());
+    }
+
+    private String createToken(Map<String, Object> claims, String username) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + jwtProperties.expiration() * 1000);
+
+        return Jwts.builder()
+                .claims(claims)
+                .subject(username)
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(getSingingKey())
+                .compact();
     }
 
     private SecretKey getSingingKey() {

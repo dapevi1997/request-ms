@@ -51,10 +51,4 @@ public class EstadosEntity {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
-
-    @Override
-    public String toString() {
-        return "EstadosEntity{" + "idEstado=" + idEstado + ", nombre='" + nombre + '\''
-                + ", descripcion='" + descripcion + '\'' + '}';
-    }
 }

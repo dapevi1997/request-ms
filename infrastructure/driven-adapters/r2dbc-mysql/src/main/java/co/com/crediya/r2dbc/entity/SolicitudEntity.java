@@ -101,17 +101,4 @@ public class SolicitudEntity {
     public void setDocumentoIdentidad(String documentoIdentidad) {
         this.documentoIdentidad = documentoIdentidad;
     }
-
-    @Override
-    public String toString() {
-        return "SolicitudEntity{" +
-                "idSolicitud=" + idSolicitud +
-                ", monto=" + monto +
-                ", plazo=" + plazo +
-                ", email='" + email + '\'' +
-                ", documentoIdentidad='" + documentoIdentidad + '\'' +
-                ", idEstado=" + idEstado +
-                ", idTipoPrestamo=" + idTipoPrestamo +
-                '}';
-    }
 }

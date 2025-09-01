@@ -2,11 +2,9 @@ package co.com.crediya.model.estado;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import co.com.crediya.model.exceptions.InvalidEntityException;
 import org.junit.jupiter.api.Test;
+import co.com.crediya.model.exceptions.InvalidEntityException;
 
 class EstadoTest {
     @Test
@@ -144,16 +142,21 @@ class EstadoTest {
     }
 
     @Test
-    void deberiaGenerarToStringCorrectamenteCuandoValoresSonNulos() {
+    void gettersYSettersFuncionanCorrectamente() {
         // Arrange
         Estado estado = new Estado();
-        String expectedToString = "Estados{idEstado=null, nombre='null', descripcion='null'}";
+        Long id = 99L;
+        String nombre = "RECHAZADO";
+        String descripcion = "Estado rechazado";
 
         // Act
-        String actualToString = estado.toString();
+        estado.setIdEstado(id);
+        estado.setNombre(nombre);
+        estado.setDescripcion(descripcion);
 
         // Assert
-        assertEquals(expectedToString, actualToString);
+        assertEquals(id, estado.getIdEstado());
+        assertEquals(nombre, estado.getNombre());
+        assertEquals(descripcion, estado.getDescripcion());
     }
 }
-

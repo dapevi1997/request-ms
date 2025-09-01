@@ -90,12 +90,4 @@ public class TipoPrestamoEntity {
     public void setValidacionAutomatica(Boolean validacionAutomatica) {
         this.validacionAutomatica = validacionAutomatica;
     }
-
-    @Override
-    public String toString() {
-        return "TipoPrestamoEntity{" + "idTipoPrestamo=" + idTipoPrestamo + ", nombre='" + nombre
-                + '\'' + ", montoMaximo=" + montoMaximo + ", montoMinimo=" + montoMinimo
-                + ", tasaInteres=" + tasaInteres + ", validacionAutomatica=" + validacionAutomatica
-                + '}';
-    }
 }
