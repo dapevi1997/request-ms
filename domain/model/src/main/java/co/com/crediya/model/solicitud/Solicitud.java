@@ -1,6 +1,8 @@
 package co.com.crediya.model.solicitud;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+
 import co.com.crediya.model.utils.ValidacionesDominio;
 
 public class Solicitud {
@@ -11,6 +13,7 @@ public class Solicitud {
     private String documentoIdentidad;
     private Long idEstado;
     private Long idTipoPrestamo;
+    private LocalDate fechaCreacion;
 
     public Solicitud() {}
 
@@ -103,5 +106,13 @@ public class Solicitud {
 
     public void setDocumentoIdentidad(String documentoIdentidad) {
         this.documentoIdentidad = documentoIdentidad;
+    }
+
+    public LocalDate getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(LocalDate fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
     }
 }

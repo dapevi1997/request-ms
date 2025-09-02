@@ -8,7 +8,7 @@ import co.com.crediya.model.solicitud.gateways.SolicitudRepository;
 import co.com.crediya.model.tipoprestamo.gateways.TipoPrestamoRepository;
 import reactor.core.publisher.Mono;
 
-import java.util.logging.Logger;
+import java.time.LocalDate;
 
 public class EnviarSolicitudPrestamoUseCase {
     private static final String ESTADO_PENDIENTE_DE_REVISION = "PENDIENTE_DE_REVISION";
@@ -50,6 +50,7 @@ public class EnviarSolicitudPrestamoUseCase {
                 .doOnError(error -> loggerGateway.error("Estado " + ESTADO_PENDIENTE_DE_REVISION + " no se encuentra en la base de datos"))
                 .map(estado -> {
                     solicitud.setIdEstado(estado.getIdEstado());
+                    solicitud.setFechaCreacion(LocalDate.now());
                     return solicitud;
                 });
     }

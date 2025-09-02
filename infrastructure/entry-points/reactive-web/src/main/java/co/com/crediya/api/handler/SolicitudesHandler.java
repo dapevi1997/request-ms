@@ -41,16 +41,16 @@ public class SolicitudesHandler {
                 .map(solicitudRequestDto -> objectMapper.map(solicitudRequestDto, Solicitud.class))
                 .flatMap(enviarSolicitudPrestamoUseCase::guardarSolicitud)
                 .flatMap(solicitud -> {
-                    SolicitudResponseDto solicitudResponseDto = new SolicitudResponseDto();
-                    solicitudResponseDto.setIdPrestamo(solicitud.getIdTipoPrestamo());
-                    solicitudResponseDto.setEmail(solicitud.getEmail());
-                    solicitudResponseDto.setDocumentoIdentidad(solicitud.getDocumentoIdentidad());
-                    solicitudResponseDto.setMensaje("Solicitud creada correctamente");
                     loggerGateway.info("Solicitud de préstamo creada correctamente");
 
                     return ServerResponse.status(HttpStatus.CREATED)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .bodyValue(solicitudResponseDto);
+                            .bodyValue(SolicitudResponseDto
+                                    .builder()
+                                    .idPrestamo(solicitud.getIdTipoPrestamo())
+                                    .email(solicitud.getEmail())
+                                    .documentoIdentidad(solicitud.getDocumentoIdentidad())
+                                    .mensaje("Solicitud creada correctamente").build());
                 });
     }
 

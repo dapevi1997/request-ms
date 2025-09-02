@@ -20,6 +20,10 @@ management:
         enabled: true
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
+routes:
+  paths:
+    crearSolicitud: "/api/v1/solicitud"
+    solicitudesRevision: "/api/v1/solicitud"
 springdoc:
   swagger-ui:
     path: "/swagger-docs"
