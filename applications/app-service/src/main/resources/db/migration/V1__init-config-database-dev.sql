@@ -7,8 +7,6 @@ CREATE TABLE IF NOT EXISTS estados (
     id_estado BIGINT AUTO_INCREMENT PRIMARY KEY,  -- Cambio a BIGINT para coincidir con dominio
     nombre VARCHAR(100) NOT NULL,
     descripcion VARCHAR(255),
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     UNIQUE KEY uk_estados_nombre (nombre)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -21,8 +19,6 @@ CREATE TABLE IF NOT EXISTS tipo_prestamo (
     monto_maximo DECIMAL(15,2) NOT NULL,
     tasa_interes DECIMAL(5,4) NOT NULL,
     validacion_automatica BOOLEAN NOT NULL DEFAULT FALSE,
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     UNIQUE KEY uk_tipo_prestamo_nombre (nombre),
     CONSTRAINT chk_monto_maximo_minimo CHECK (monto_maximo > monto_minimo),
@@ -39,8 +35,7 @@ CREATE TABLE IF NOT EXISTS solicitud (
     documento_identidad VARCHAR(255) NOT NULL,
     id_estado BIGINT NOT NULL,  -- Cambio a BIGINT
     id_tipo_prestamo BIGINT NOT NULL,  -- Cambio a BIGINT
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fecha_creacion DATE,
 
     INDEX idx_solicitud_email (email),
     INDEX idx_solicitud_estado (id_estado),

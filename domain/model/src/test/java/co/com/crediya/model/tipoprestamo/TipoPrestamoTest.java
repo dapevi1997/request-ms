@@ -123,4 +123,32 @@ class TipoPrestamoTest {
         assertNull(tipoPrestamo.getTasaInteres());
         assertNull(tipoPrestamo.getValidacionAutomatica());
     }
+
+    @Test
+    void gettersYSettersFuncionanCorrectamente() {
+        // Arrange
+        TipoPrestamo tipoPrestamo = new TipoPrestamo();
+        Long id = 5L;
+        String nombre = "Test";
+        BigDecimal max = new BigDecimal("1000");
+        BigDecimal min = new BigDecimal("100");
+        BigDecimal tasa = new BigDecimal("10.5");
+        Boolean validacion = false;
+
+        // Act
+        tipoPrestamo.setIdTipoPrestamo(id);
+        tipoPrestamo.setNombre(nombre);
+        tipoPrestamo.setMontoMaximo(max);
+        tipoPrestamo.setMontoMinimo(min);
+        tipoPrestamo.setTasaInteres(tasa);
+        tipoPrestamo.setValidacionAutomatica(validacion);
+
+        // Assert
+        assertEquals(id, tipoPrestamo.getIdTipoPrestamo());
+        assertEquals(nombre, tipoPrestamo.getNombre());
+        assertEquals(max, tipoPrestamo.getMontoMaximo());
+        assertEquals(min, tipoPrestamo.getMontoMinimo());
+        assertEquals(tasa, tipoPrestamo.getTasaInteres());
+        assertEquals(validacion, tipoPrestamo.getValidacionAutomatica());
+    }
 }

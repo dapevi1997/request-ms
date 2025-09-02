@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
+
+import co.com.crediya.model.logger.LoggerGateway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,6 +32,9 @@ class EnviarSolicitudPrestamoUseCaseTest {
     private TipoPrestamoRepository tipoPrestamoRepository;
 
     @Mock
+    private LoggerGateway loggerGateway;
+
+    @Mock
     private EstadosRepository estadosRepository;
 
     private EnviarSolicitudPrestamoUseCase useCase;
@@ -37,7 +42,7 @@ class EnviarSolicitudPrestamoUseCaseTest {
     @BeforeEach
     void setUp() {
         useCase = new EnviarSolicitudPrestamoUseCase(solicitudRepository, tipoPrestamoRepository,
-                estadosRepository);
+                estadosRepository, loggerGateway);
     }
 
     @Test

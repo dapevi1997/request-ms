@@ -1,6 +1,5 @@
 package co.com.crediya.r2dbc;
 
-import co.com.crediya.model.estado.Estado;
 import co.com.crediya.r2dbc.entity.EstadosEntity;
 import org.springframework.data.repository.query.ReactiveQueryByExampleExecutor;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;

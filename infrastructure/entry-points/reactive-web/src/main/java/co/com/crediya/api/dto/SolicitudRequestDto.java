@@ -3,11 +3,19 @@ package co.com.crediya.api.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Schema(description = "DTO para solicitar un préstamo")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class SolicitudRequestDto implements Serializable {
     @NotBlank(message = "El documento de identidad no puede estar vacío")
     @NotNull(message = "El documento de identidad no puede ser nulo")
@@ -39,55 +47,4 @@ public class SolicitudRequestDto implements Serializable {
     @Min(value = 1, message = "El ID del tipo de préstamo debe ser mayor a cero")
     @Schema(description = "ID del tipo de préstamo", examples = "1")
     private Long idTipoPrestamo;
-
-    public BigDecimal getMonto() {
-        return monto;
-    }
-
-    public void setMonto(BigDecimal monto) {
-        this.monto = monto;
-    }
-
-    public Integer getPlazo() {
-        return plazo;
-    }
-
-    public void setPlazo(Integer plazo) {
-        this.plazo = plazo;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Long getIdTipoPrestamo() {
-        return idTipoPrestamo;
-    }
-
-    public void setIdTipoPrestamo(Long idTipoPrestamo) {
-        this.idTipoPrestamo = idTipoPrestamo;
-    }
-
-    public String getDocumentoIdentidad() {
-        return documentoIdentidad;
-    }
-
-    public void setDocumentoIdentidad(String documentoIdentidad) {
-        this.documentoIdentidad = documentoIdentidad;
-    }
-
-    @Override
-    public String toString() {
-        return "SolicitarPrestamoRequestDto{" +
-                "documentoIdentidad='" + documentoIdentidad + '\'' +
-                ", monto=" + monto +
-                ", plazo=" + plazo +
-                ", email='" + email + '\'' +
-                ", idTipoPrestamo=" + idTipoPrestamo +
-                '}';
-    }
 }

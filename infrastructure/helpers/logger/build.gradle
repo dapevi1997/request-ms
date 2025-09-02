@@ -1,0 +1,7 @@
+dependencies {
+    implementation project(':model')
+    implementation 'org.springframework:spring-context'
+    implementation 'org.projectlombok:lombok:1.18.38'
+    annotationProcessor "org.projectlombok:lombok:1.18.34"
+    implementation 'ch.qos.logback:logback-classic:1.4.14'
+}
