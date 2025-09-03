@@ -23,7 +23,4 @@ public class SolicitudResponseDto implements Serializable {
 
     @Schema(description = "Estampa de tiempo de la solicitud", examples = "1256564414")
     private final String timestamp = String.valueOf(System.currentTimeMillis());
-
-    @Schema(description = "Documento de identidad del cliente", examples = "12345678")
-    private String documentoIdentidad;
 }

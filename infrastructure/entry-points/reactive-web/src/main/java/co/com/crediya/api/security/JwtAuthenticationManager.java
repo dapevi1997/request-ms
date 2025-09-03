@@ -22,22 +22,22 @@ public class JwtAuthenticationManager implements ReactiveAuthenticationManager {
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
         return Mono.just(authentication)
-                .map(auth -> jwtService.extractAllClaims(auth.getCredentials().toString()))
-                .log()
-                .onErrorResume(e -> Mono.error(new BadCredentialsException("Invalid Token")))
-                .map(claims -> {
-                            List<String> roles = claims.get("roles", List.class);
+                .flatMap(auth -> {
+                    try {
+                        var claims = jwtService.extractAllClaims(auth.getCredentials().toString());
+                        List<String> roles = claims.get("roles", List.class);
+                        var authorities = roles.stream()
+                                .map(SimpleGrantedAuthority::new)
+                                .toList();
 
-                            List<SimpleGrantedAuthority> authorities = roles.stream()
-                                    .map(SimpleGrantedAuthority::new)
-                                    .toList();
-
-                           return new UsernamePasswordAuthenticationToken(
-                                    claims.getSubject(),
-                                    null,
-                                    authorities
-                            );
-                }
-                );
+                        return Mono.just(new UsernamePasswordAuthenticationToken(
+                                claims.getSubject(),
+                                null,
+                                authorities
+                        ));
+                    } catch (Exception e) {
+                        return Mono.error(new BadCredentialsException("Invalid Token"));
+                    }
+                });
     }
 }
