@@ -15,20 +15,18 @@ class SolicitudTest {
         BigDecimal monto = new BigDecimal("50000");
         Integer plazo = 12;
         String email = "usuario@example.com";
-        String documentoIdentidad = "12345678";
         Long idEstado = 1L;
         Long idTipoPrestamo = 1L;
 
         // Act
         Solicitud solicitud =
-                new Solicitud(monto, plazo, email, documentoIdentidad, idEstado, idTipoPrestamo);
+                new Solicitud(monto, plazo, email, idEstado, idTipoPrestamo);
 
         // Assert
         assertNotNull(solicitud);
         assertEquals(monto, solicitud.getMonto());
         assertEquals(plazo, solicitud.getPlazo());
         assertEquals(email, solicitud.getEmail());
-        assertEquals(documentoIdentidad, solicitud.getDocumentoIdentidad());
         assertEquals(idEstado, solicitud.getIdEstado());
         assertEquals(idTipoPrestamo, solicitud.getIdTipoPrestamo());
         assertNull(solicitud.getIdSolicitud());
@@ -41,12 +39,11 @@ class SolicitudTest {
         BigDecimal monto = new BigDecimal("50000");
         Integer plazo = 12;
         String email = "usuario@example.com";
-        String documentoIdentidad = "12345678";
         Long idEstado = 1L;
         Long idTipoPrestamo = 1L;
 
         // Act
-        Solicitud solicitud = new Solicitud(idSolicitud, monto, plazo, email, documentoIdentidad,
+        Solicitud solicitud = new Solicitud(idSolicitud, monto, plazo, email,
                 idEstado, idTipoPrestamo);
 
         // Assert
@@ -55,7 +52,6 @@ class SolicitudTest {
         assertEquals(monto, solicitud.getMonto());
         assertEquals(plazo, solicitud.getPlazo());
         assertEquals(email, solicitud.getEmail());
-        assertEquals(documentoIdentidad, solicitud.getDocumentoIdentidad());
         assertEquals(idEstado, solicitud.getIdEstado());
         assertEquals(idTipoPrestamo, solicitud.getIdTipoPrestamo());
     }
@@ -71,7 +67,6 @@ class SolicitudTest {
         assertNull(solicitud.getMonto());
         assertNull(solicitud.getPlazo());
         assertNull(solicitud.getEmail());
-        assertNull(solicitud.getDocumentoIdentidad());
         assertNull(solicitud.getIdEstado());
         assertNull(solicitud.getIdTipoPrestamo());
     }
@@ -82,13 +77,12 @@ class SolicitudTest {
         BigDecimal monto = new BigDecimal("-1000");
         Integer plazo = 12;
         String email = "usuario@example.com";
-        String documentoIdentidad = "12345678";
         Long idEstado = 1L;
         Long idTipoPrestamo = 1L;
 
         // Act & Assert
         assertThrows(InvalidEntityException.class, () -> {
-            new Solicitud(monto, plazo, email, documentoIdentidad, idEstado, idTipoPrestamo);
+            new Solicitud(monto, plazo, email, idEstado, idTipoPrestamo);
         });
     }
 
@@ -104,7 +98,7 @@ class SolicitudTest {
 
         // Act & Assert
         assertThrows(InvalidEntityException.class, () -> {
-            new Solicitud(monto, plazo, email, documentoIdentidad, idEstado, idTipoPrestamo);
+            new Solicitud(monto, plazo, email, idEstado, idTipoPrestamo);
         });
     }
 
@@ -114,29 +108,12 @@ class SolicitudTest {
         BigDecimal monto = new BigDecimal("50000");
         Integer plazo = 12;
         String email = "email_invalido";
-        String documentoIdentidad = "12345678";
         Long idEstado = 1L;
         Long idTipoPrestamo = 1L;
 
         // Act & Assert
         assertThrows(InvalidEntityException.class, () -> {
-            new Solicitud(monto, plazo, email, documentoIdentidad, idEstado, idTipoPrestamo);
-        });
-    }
-
-    @Test
-    void deberiaLanzarExcepcionCuandoDocumentoIdentidadEsVacio() {
-        // Arrange
-        BigDecimal monto = new BigDecimal("50000");
-        Integer plazo = 12;
-        String email = "usuario@example.com";
-        String documentoIdentidad = "";
-        Long idEstado = 1L;
-        Long idTipoPrestamo = 1L;
-
-        // Act & Assert
-        assertThrows(InvalidEntityException.class, () -> {
-            new Solicitud(monto, plazo, email, documentoIdentidad, idEstado, idTipoPrestamo);
+            new Solicitud(monto, plazo, email, idEstado, idTipoPrestamo);
         });
     }
 
@@ -157,7 +134,6 @@ class SolicitudTest {
         solicitud.setMonto(monto);
         solicitud.setPlazo(plazo);
         solicitud.setEmail(email);
-        solicitud.setDocumentoIdentidad(documentoIdentidad);
         solicitud.setIdEstado(idEstado);
         solicitud.setIdTipoPrestamo(idTipoPrestamo);
 
@@ -166,7 +142,6 @@ class SolicitudTest {
         assertEquals(monto, solicitud.getMonto());
         assertEquals(plazo, solicitud.getPlazo());
         assertEquals(email, solicitud.getEmail());
-        assertEquals(documentoIdentidad, solicitud.getDocumentoIdentidad());
         assertEquals(idEstado, solicitud.getIdEstado());
         assertEquals(idTipoPrestamo, solicitud.getIdTipoPrestamo());
     }

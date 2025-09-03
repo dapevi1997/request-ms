@@ -50,17 +50,15 @@ class SolicitudesHandlerTest {
     void setUp() {
         // Arrange - Datos de prueba
         solicitudRequestDto = new SolicitudRequestDto();
-        solicitudRequestDto.setDocumentoIdentidad("12345678");
         solicitudRequestDto.setMonto(new BigDecimal("50000"));
         solicitudRequestDto.setPlazo(12);
         solicitudRequestDto.setEmail("usuario@example.com");
         solicitudRequestDto.setIdTipoPrestamo(1L);
 
-        solicitud = new Solicitud(new BigDecimal("50000"), 12, "usuario@example.com", "12345678",
+        solicitud = new Solicitud(new BigDecimal("50000"), 12, "usuario@example.com",
                 1L, 1L);
 
-        solicitudGuardada = new Solicitud(1L, new BigDecimal("50000"), 12, "usuario@example.com",
-                "12345678", 1L, 1L);
+        solicitudGuardada = new Solicitud(1L, new BigDecimal("50000"), 12, "usuario@example.com", 1L, 1L);
     }
 
     @Test

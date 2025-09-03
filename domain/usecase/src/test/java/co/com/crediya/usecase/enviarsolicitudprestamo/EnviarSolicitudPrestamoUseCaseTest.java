@@ -53,12 +53,11 @@ class EnviarSolicitudPrestamoUseCaseTest {
         solicitud.setMonto(new BigDecimal("50000"));
         solicitud.setPlazo(12);
         solicitud.setEmail("user@mail.com");
-        solicitud.setDocumentoIdentidad("12345678");
         solicitud.setIdTipoPrestamo(1L);
 
         Estado estadoPendiente = new Estado(2L, "PENDIENTE_DE_REVISION", "Estado inicial");
         Solicitud solicitudGuardada = new Solicitud(1L, new BigDecimal("50000"), 12,
-                "usuario@example.com", "12345678", 2L, 1L);
+                "usuario@example.com", 2L, 1L);
 
         when(tipoPrestamoRepository.existsById(anyLong())).thenReturn(Mono.just(true));
         when(estadosRepository.findByNombre(anyString())).thenReturn(Mono.just(estadoPendiente));
@@ -74,8 +73,7 @@ class EnviarSolicitudPrestamoUseCaseTest {
     @DisplayName("Debería lanzar excepción cuando tipo de préstamo no existe")
     void deberiaLanzarExcepcionCuandoTipoPrestamoNoExiste() {
         // Arrange
-        Solicitud solicitud = new Solicitud(new BigDecimal("50000"), 12, "usuario@example.com",
-                "12345678", 1L, 999L // ID que no existe
+        Solicitud solicitud = new Solicitud(new BigDecimal("50000"), 12, "usuario@example.com", 1L, 999L // ID que no existe
         );
 
         when(tipoPrestamoRepository.existsById(anyLong())).thenReturn(Mono.just(false));
@@ -91,8 +89,7 @@ class EnviarSolicitudPrestamoUseCaseTest {
     @DisplayName("Debería lanzar excepción cuando estado inicial no existe")
     void deberiaLanzarExcepcionCuandoEstadoInicialNoExiste() {
         // Arrange
-        Solicitud solicitud = new Solicitud(new BigDecimal("50000"), 12, "usuario@example.com",
-                "12345678", 1L, 1L);
+        Solicitud solicitud = new Solicitud(new BigDecimal("50000"), 12, "usuario@example.com", 1L, 1L);
 
         when(tipoPrestamoRepository.existsById(anyLong())).thenReturn(Mono.just(true));
         when(estadosRepository.findByNombre(anyString())).thenReturn(Mono.empty());

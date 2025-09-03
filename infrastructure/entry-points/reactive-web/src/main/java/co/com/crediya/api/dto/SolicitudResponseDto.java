@@ -9,6 +9,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder(toBuilder = true)
 public class SolicitudResponseDto implements Serializable {
 
