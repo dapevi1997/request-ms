@@ -22,4 +22,6 @@ public class SolicitudListaPendientesRevisionResponseDto implements Serializable
     private String estado;
     private BigDecimal totalMontoAprobadoUltimoMes;
     private BigDecimal tasaInteres;
+    private String nombreUsuario;
+    private BigDecimal salarioBase;
 }

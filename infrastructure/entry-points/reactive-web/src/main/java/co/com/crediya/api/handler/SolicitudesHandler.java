@@ -4,6 +4,7 @@ import co.com.crediya.api.dto.SolicitudListaPendientesRevisionResponseDto;
 import co.com.crediya.api.dto.SolicitudRequestDto;
 import co.com.crediya.api.dto.SolicitudResponseDto;
 import co.com.crediya.api.exceptions.BadRequestException;
+import co.com.crediya.consumer.RestConsumer;
 import co.com.crediya.model.logger.LoggerGateway;
 import co.com.crediya.model.solicitud.Solicitud;
 import co.com.crediya.usecase.enviarsolicitudprestamo.EnviarSolicitudPrestamoUseCase;
@@ -31,6 +32,7 @@ public class SolicitudesHandler {
     private  final EnviarSolicitudPrestamoUseCase enviarSolicitudPrestamoUseCase;
     private  final ObtenerListadoRevisionManualUseCase obtenerListadoRevisionManualUseCase;
     private final LoggerGateway loggerGateway;
+    private final RestConsumer restConsumer;
 
 
     public Mono<ServerResponse> registroSolicitudPrestamo(ServerRequest serverRequest) {
@@ -73,14 +75,31 @@ public class SolicitudesHandler {
         String estado = serverRequest.queryParam("estado").orElse("PENDIENTE_DE_REVISION");
         int limit = serverRequest.queryParam("limit").map(Integer::parseInt).orElse(10);
         int offset = serverRequest.queryParam("offset").map(Integer::parseInt).orElse(0);
+        String token = serverRequest.headers().firstHeader("Authorization");
 
-        return obtenerListadoRevisionManualUseCase.listSolicitudesAprobadasUltimoMes(estado, limit, offset)
-/*                .map(solicitudConTotalAprobadoUltimoMes -> {
-
-                })*/
+        return obtenerListadoRevisionManualUseCase
+                .listSolicitudesAprobadasUltimoMes(estado, limit, offset)
+                .flatMapSequential(solicitud ->
+                        restConsumer.getUserByEmail(solicitud.getEmail(), token)
+                                .map(user -> SolicitudListaPendientesRevisionResponseDto.builder()
+                                        .email(solicitud.getEmail())
+                                        .monto(solicitud.getMonto())
+                                        .plazo(solicitud.getPlazo())
+                                        .tipoPrestamo(solicitud.getTipoPrestamo())
+                                        .totalMontoAprobadoUltimoMes(solicitud.getTotalMontoAprobadoUltimoMes())
+                                        .estado(solicitud.getEstado())
+                                        .tasaInteres(solicitud.getTasaInteres())
+                                        .nombreUsuario(user.getName())
+                                        .salarioBase(user.getBaseSalary())
+                                        .build()
+                                )
+                )
+                .doOnNext(dto -> System.out.println("Agregando a la lista: " + dto.getEmail()))
                 .collectList()
-                .flatMap(result -> ServerResponse.ok()
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(SolicitudListaPendientesRevisionResponseDto.builder()));
+                .flatMap(list ->
+                        ServerResponse.ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(list)
+                );
     }
 }

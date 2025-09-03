@@ -6,6 +6,7 @@ public class SolicitudConTotalAprobadoUltimoMes extends Solicitud{
     private BigDecimal totalMontoAprobadoUltimoMes;
     private String tipoPrestamo;
     private String estado;
+    private BigDecimal tasaInteres;
 
     public BigDecimal getTotalMontoAprobadoUltimoMes() {
         return totalMontoAprobadoUltimoMes;
@@ -29,5 +30,13 @@ public class SolicitudConTotalAprobadoUltimoMes extends Solicitud{
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public BigDecimal getTasaInteres() {
+        return tasaInteres;
+    }
+
+    public void setTasaInteres(BigDecimal tasaInteres) {
+        this.tasaInteres = tasaInteres;
     }
 }
