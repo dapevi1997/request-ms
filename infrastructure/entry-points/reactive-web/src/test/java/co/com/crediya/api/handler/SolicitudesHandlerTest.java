@@ -1,11 +1,15 @@
 package co.com.crediya.api.handler;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
+
+import co.com.crediya.consumer.FindUserByEmailResponseDto;
+import co.com.crediya.consumer.RestConsumer;
+import co.com.crediya.model.solicitud.SolicitudConTotalAprobadoUltimoMes;
+import co.com.crediya.usecase.obtenerlistadorevisionmanual.ObtenerListadoRevisionManualUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +25,7 @@ import co.com.crediya.api.dto.SolicitudRequestDto;
 import co.com.crediya.model.logger.LoggerGateway;
 import co.com.crediya.model.solicitud.Solicitud;
 import co.com.crediya.usecase.enviarsolicitudprestamo.EnviarSolicitudPrestamoUseCase;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -34,10 +39,16 @@ class SolicitudesHandlerTest {
     private EnviarSolicitudPrestamoUseCase enviarSolicitudPrestamoUseCase;
 
     @Mock
+    private ObtenerListadoRevisionManualUseCase obtenerListadoRevisionManualUseCase;
+
+    @Mock
     private ObjectMapper objectMapper;
 
     @Mock
     private LoggerGateway loggerGateway;
+
+    @Mock
+    private RestConsumer restConsumer;
 
     @InjectMocks
     private SolicitudesHandler solicitudesHandler;
@@ -110,13 +121,36 @@ class SolicitudesHandlerTest {
     @Test
     @DisplayName("Debería obtener listado de solicitudes")
     void deberiaObtenerListadoDeSolicitudes() {
-        /*
-         * // Arrange MockServerRequest request = MockServerRequest.builder().build();
-         * 
-         * // Act Mono<ServerResponse> response = solicitudesHandler.listadoSolicitudes(request);
-         * 
-         * // Assert StepVerifier.create(response) .assertNext(serverResponse -> {
-         * assertThat(serverResponse.statusCode().value()).isEqualTo(200); }) .verifyComplete();
-         */
+        // Arrange
+        String email = "usuario@example.com";
+        String token = "Bearer test-token";
+
+
+        FindUserByEmailResponseDto userResponse = new FindUserByEmailResponseDto();
+        userResponse.setName("Juan Perez");
+        userResponse.setBaseSalary(new BigDecimal("2000"));
+
+        SolicitudConTotalAprobadoUltimoMes solicitudConTotalAprobadoUltimoMes = new SolicitudConTotalAprobadoUltimoMes();
+        solicitudConTotalAprobadoUltimoMes.setEmail(email);
+
+        when(obtenerListadoRevisionManualUseCase.listSolicitudesAprobadasUltimoMes(anyString(), anyInt(), anyInt()))
+                .thenReturn(Flux.just(solicitudConTotalAprobadoUltimoMes));
+
+        when(restConsumer.getUserByEmail(anyString(), anyString()))
+                .thenReturn(Mono.just(userResponse));
+
+        MockServerRequest request = MockServerRequest.builder()
+                .header("Authorization", token)
+                .build();
+
+        // Act
+        Mono<ServerResponse> response = solicitudesHandler.listadoSolicitudes(request);
+
+        // Assert
+        StepVerifier.create(response)
+                .assertNext(serverResponse -> {
+                    assertThat(serverResponse.statusCode().value()).isEqualTo(200);
+                })
+                .verifyComplete();
     }
 }

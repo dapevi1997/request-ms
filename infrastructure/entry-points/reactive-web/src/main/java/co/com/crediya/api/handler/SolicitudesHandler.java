@@ -94,7 +94,6 @@ public class SolicitudesHandler {
                                         .build()
                                 )
                 )
-                .doOnNext(dto -> System.out.println("Agregando a la lista: " + dto.getEmail()))
                 .collectList()
                 .flatMap(list ->
                         ServerResponse.ok()
