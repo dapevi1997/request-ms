@@ -2,10 +2,11 @@ package co.com.crediya.api.handler;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+
 import java.math.BigDecimal;
 
+import co.com.crediya.api.exceptions.BadRequestException;
 import co.com.crediya.consumer.FindUserByEmailResponseDto;
 import co.com.crediya.consumer.RestConsumer;
 import co.com.crediya.model.solicitud.SolicitudConTotalAprobadoUltimoMes;
@@ -19,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.mock.web.reactive.function.server.MockServerRequest;
+import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import co.com.crediya.api.dto.SolicitudRequestDto;
@@ -94,6 +96,29 @@ class SolicitudesHandlerTest {
         StepVerifier.create(response).assertNext(serverResponse -> {
             assertThat(serverResponse.statusCode().value()).isEqualTo(201);
         }).verifyComplete();
+    }
+
+    @Test
+    @DisplayName("Debería fallar con BadRequestException cuando los datos son inválidos")
+    void deberiaFallarConBadRequestCuandoLosDatosSonInvalidos() {
+        // Arrange
+        MockServerRequest request = MockServerRequest.builder()
+                .body(Mono.just(solicitudRequestDto));
+
+        // Simulamos que el validator encuentra errores
+        doAnswer(invocation -> {
+            Errors errors = invocation.getArgument(1);
+            errors.rejectValue("email", "invalid", "El email es obligatorio");
+            return null;
+        }).when(validator).validate(any(), any());
+
+        // Act
+        Mono<ServerResponse> response = solicitudesHandler.registroSolicitudPrestamo(request);
+
+        // Assert
+        StepVerifier.create(response)
+                .expectError(BadRequestException.class)
+                .verify();
     }
 
     @Test
