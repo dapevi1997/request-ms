@@ -7,5 +7,6 @@ import reactor.core.publisher.Mono;
 
 public interface SolicitudRepository {
     Mono<Solicitud> save(Solicitud solicitud);
+    Mono<Solicitud> findById(Long id);
     Flux<SolicitudConTotalAprobadoUltimoMes> findByEstadoFilter(String estado, int limit, int offset);
 }

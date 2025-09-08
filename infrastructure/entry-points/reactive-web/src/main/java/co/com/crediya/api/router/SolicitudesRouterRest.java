@@ -29,6 +29,7 @@
         public RouterFunction<ServerResponse> routerRevisiones(SolicitudesHandler solicitudesHandler) {
             return route()
                     .GET(solicitudesPath.getSolicitudesRevision(), solicitudesHandler::listadoSolicitudes, SolicitudesOpenApi::listadoSolicitudes)
+                    .PUT(solicitudesPath.getCrearSolicitud(), solicitudesHandler::actualizarSolicitud, SolicitudesOpenApi::actualizarSolicitud)
                     .build();
         }
 

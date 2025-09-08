@@ -11,6 +11,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerCodecConfigurer;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.*;
@@ -36,6 +37,7 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
         exceptionToHttpStatus.put(InvalidEntityException.class, HttpStatus.BAD_REQUEST);
         exceptionToHttpStatus.put(ServerWebInputException.class, HttpStatus.BAD_REQUEST);
         exceptionToHttpStatus.put(BadRequestException.class, HttpStatus.BAD_REQUEST);
+        exceptionToHttpStatus.put(BadCredentialsException.class, HttpStatus.BAD_REQUEST);
     }
 
     @Override

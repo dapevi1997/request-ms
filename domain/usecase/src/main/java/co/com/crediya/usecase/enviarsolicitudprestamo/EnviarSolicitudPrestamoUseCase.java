@@ -29,7 +29,7 @@ public class EnviarSolicitudPrestamoUseCase {
         return validarTipoPrestamo(solicitud)
                 .flatMap(this::setearEstadoInicial)
                 .flatMap(solicitudRepository::save)
-                .doOnSuccess(success -> loggerGateway.info("Solicitud con id " + solicitud.getIdSolicitud() + " guardada correctamente"));
+                .doOnSuccess(success -> loggerGateway.info("Solicitud con id " + success.getIdSolicitud() + " guardada correctamente"));
     }
 
     private Mono<Solicitud> validarTipoPrestamo(Solicitud solicitud) {

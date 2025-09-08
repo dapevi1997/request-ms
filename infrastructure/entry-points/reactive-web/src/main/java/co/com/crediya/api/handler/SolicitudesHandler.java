@@ -1,12 +1,15 @@
 package co.com.crediya.api.handler;
 
-import co.com.crediya.api.dto.SolicitudListaPendientesRevisionResponseDto;
-import co.com.crediya.api.dto.SolicitudRequestDto;
-import co.com.crediya.api.dto.SolicitudResponseDto;
+import co.com.crediya.api.dto.*;
 import co.com.crediya.api.exceptions.BadRequestException;
+import co.com.crediya.api.util.JsonMapper;
 import co.com.crediya.consumer.RestConsumer;
+import co.com.crediya.model.estado.gateways.EstadosRepository;
+import co.com.crediya.model.exceptions.DomainException;
 import co.com.crediya.model.logger.LoggerGateway;
 import co.com.crediya.model.solicitud.Solicitud;
+import co.com.crediya.sqs.sender.SQSSender;
+import co.com.crediya.usecase.actualizarsolicitud.ActualizarSolicitudUseCase;
 import co.com.crediya.usecase.enviarsolicitudprestamo.EnviarSolicitudPrestamoUseCase;
 import co.com.crediya.usecase.obtenerlistadorevisionmanual.ObtenerListadoRevisionManualUseCase;
 import lombok.RequiredArgsConstructor;
@@ -29,35 +32,35 @@ import java.util.stream.Collectors;
 public class SolicitudesHandler {
     private final Validator validator;
     private final ObjectMapper objectMapper;
-    private  final EnviarSolicitudPrestamoUseCase enviarSolicitudPrestamoUseCase;
-    private  final ObtenerListadoRevisionManualUseCase obtenerListadoRevisionManualUseCase;
+    private final EnviarSolicitudPrestamoUseCase enviarSolicitudPrestamoUseCase;
+    private final ObtenerListadoRevisionManualUseCase obtenerListadoRevisionManualUseCase;
     private final LoggerGateway loggerGateway;
     private final RestConsumer restConsumer;
+    private final ActualizarSolicitudUseCase actualizarSolicitudUseCase;
+    private final SQSSender sqsSender;
+    private final JsonMapper jsonMapper;
+    private final EstadosRepository estadosRepository;
 
 
     public Mono<ServerResponse> registroSolicitudPrestamo(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(SolicitudRequestDto.class)
                 .doOnError(error -> loggerGateway.error("Error al leer el cuerpo de la solicitud: {}", error.getMessage()))
-                .flatMap(this::validateRequest)
+                .flatMap(this::validateRequestsDtos)
                 .map(solicitudRequestDto -> objectMapper.map(solicitudRequestDto, Solicitud.class))
                 .flatMap(enviarSolicitudPrestamoUseCase::guardarSolicitud)
-                .flatMap(solicitud -> {
-                    loggerGateway.info("Solicitud de préstamo creada correctamente");
-
-                    return ServerResponse.status(HttpStatus.CREATED)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .bodyValue(SolicitudResponseDto
-                                    .builder()
-                                    .idPrestamo(solicitud.getIdTipoPrestamo())
-                                    .email(solicitud.getEmail())
-                                    .mensaje("Solicitud creada correctamente").build());
-                });
+                .flatMap(solicitud -> ServerResponse.status(HttpStatus.CREATED)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(SolicitudResponseDto
+                                .builder()
+                                .idPrestamo(solicitud.getIdTipoPrestamo())
+                                .email(solicitud.getEmail())
+                                .mensaje("Solicitud creada correctamente").build()));
     }
 
-    private Mono<SolicitudRequestDto> validateRequest(SolicitudRequestDto solicitudRequestDto) {
+    private <T> Mono<T> validateRequestsDtos(T request) {
         return Mono.fromCallable(() -> {
-            Errors errors = new BeanPropertyBindingResult(solicitudRequestDto, "solicitudRequest");
-            validator.validate(solicitudRequestDto, errors);
+            Errors errors = new BeanPropertyBindingResult(request, request.getClass().getSimpleName());
+            validator.validate(request, errors);
 
             if (errors.hasErrors()) {
                 String mensajesError = errors.getAllErrors().stream()
@@ -67,7 +70,7 @@ public class SolicitudesHandler {
                 throw new BadRequestException("Errores de validación: " + mensajesError);
             }
 
-            return solicitudRequestDto;
+            return request;
         });
     }
 
@@ -100,5 +103,29 @@ public class SolicitudesHandler {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .bodyValue(list)
                 );
+    }
+
+    public Mono<ServerResponse> actualizarSolicitud(ServerRequest serverRequest) {
+        return serverRequest.bodyToMono(ActualizarSolicitudRequestDto.class)
+                .flatMap(this::validateRequestsDtos)
+                .doOnError(error -> loggerGateway.error("Error al leer el cuerpo de la solicitud: {}", error.getMessage()))
+                .map(request -> objectMapper.map(request, Solicitud.class))
+                .flatMap(actualizarSolicitudUseCase::actualizarSolicitud)
+                .doOnSuccess(solicitud -> loggerGateway.info("Solicitud {} actualizada en base de datos", solicitud.getIdSolicitud()))
+                .filter(solicitud -> solicitud.getIdEstado().equals(3L) || solicitud.getIdEstado().equals(4L))
+                .flatMap(solicitud -> estadosRepository.findById(solicitud.getIdEstado())
+                        .switchIfEmpty(Mono.error(new DomainException("No existe estados en base de datos con id " + solicitud.getIdEstado())))
+                                .flatMap(estado -> Mono.fromCallable(() -> jsonMapper.convertirObjetoAJson(NotificacionEstadoSqsDto.builder()
+                                        .mensaje(estado.getDescripcion())
+                                        .estado(estado.getNombre())
+                                        .correo(solicitud.getEmail()).build())))
+                        .flatMap(sqsSender::send)
+                        .doOnSuccess(s -> loggerGateway.info("Mensaje enviado a cola SQS, id préstamo {}", solicitud.getIdSolicitud()))
+                        .then(Mono.just(solicitud)))
+                .flatMap(solicitud -> ServerResponse.ok().bodyValue(ActualizarSolicitudResponseDto.builder()
+                        .idPrestamo(solicitud.getIdTipoPrestamo())
+                        .email(solicitud.getEmail())
+                        .mensaje("Solicitud actualizada exitosamente")
+                        .build()));
     }
 }

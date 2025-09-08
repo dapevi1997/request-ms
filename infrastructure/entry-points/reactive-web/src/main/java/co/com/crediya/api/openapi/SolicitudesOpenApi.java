@@ -1,8 +1,6 @@
 package co.com.crediya.api.openapi;
 
-import co.com.crediya.api.dto.ErrorResponseDto;
-import co.com.crediya.api.dto.SolicitudRequestDto;
-import co.com.crediya.api.dto.SolicitudResponseDto;
+import co.com.crediya.api.dto.*;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.experimental.UtilityClass;
 import org.springframework.http.HttpStatus;
@@ -81,6 +79,49 @@ public class SolicitudesOpenApi {
                         .description("Solicitud creada correctamente")
                         .content(contentBuilder().mediaType(MediaType.APPLICATION_JSON_VALUE)
                                 .schema(schemaBuilder().implementation(SolicitudResponseDto.class))))
+
+                // 500 Internal Server Error
+                .response(responseBuilder()
+                        .responseCode(INTERNAL_ERROR_CODE)
+                        .description("Error interno del servidor")
+                        .content(contentBuilder().mediaType(MediaType.APPLICATION_JSON_VALUE)
+                                .schema(schemaBuilder().implementation(ErrorResponseDto.class))));
+    }
+
+    public Builder actualizarSolicitud(Builder builder) {
+        return builder
+                .operationId("actualizarSolicitud")
+                .tag("Solicitudes de préstamo")
+                .summary("Actualizar una solicitud de préstamo")
+                .security(org.springdoc.core.fn.builders.securityrequirement.Builder.securityRequirementBuilder().name("bearerAuth"))
+
+                // requestBody
+                .requestBody(requestBodyBuilder()
+                        .required(true)
+                        .description("Json asociado a la request")
+                        .content(contentBuilder().mediaType(MediaType.APPLICATION_JSON_VALUE)
+                                .schema(schemaBuilder().implementation(ActualizarSolicitudRequestDto.class))))
+
+                // 200 Succes
+                .response(responseBuilder()
+                        .responseCode(SUCCES_CODE)
+                        .description("Solicitud actualizada correctamente")
+                        .content(contentBuilder().mediaType(MediaType.APPLICATION_JSON_VALUE)
+                                .schema(schemaBuilder().implementation(ActualizarSolicitudResponseDto.class))))
+
+                // 400 Bad Request
+                .response(responseBuilder()
+                        .responseCode(BAD_REQUEST_CODE)
+                        .description("Error en la solicitud")
+                        .content(contentBuilder().mediaType(MediaType.APPLICATION_JSON_VALUE)
+                                .schema(schemaBuilder().implementation(ErrorResponseDto.class))))
+
+                // 409 Conflict
+                .response(responseBuilder()
+                        .responseCode(CONFLICT_CODE)
+                        .description("Conflicto al actualizar la solicitud")
+                        .content(contentBuilder().mediaType(MediaType.APPLICATION_JSON_VALUE)
+                                .schema(schemaBuilder().implementation(ErrorResponseDto.class))))
 
                 // 500 Internal Server Error
                 .response(responseBuilder()
