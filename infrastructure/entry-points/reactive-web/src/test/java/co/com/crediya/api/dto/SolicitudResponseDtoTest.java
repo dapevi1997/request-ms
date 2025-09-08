@@ -20,11 +20,10 @@ class SolicitudResponseDtoTest {
     void deberiaCrearSolicitudResponseDtoConValoresPorDefecto() {
         // Act & Assert
         assertThat(solicitudResponseDto.getIdPrestamo()).isNull();
-        assertThat(solicitudResponseDto.getDocumentoIdentidad()).isNull();
         assertThat(solicitudResponseDto.getEmail()).isNull();
         assertThat(solicitudResponseDto.getMensaje()).isNull();
-        assertThat(solicitudResponseDto.getTimestamp()).isNotNull(); // Es final y se inicializa
-                                                                     // automáticamente
+        assertThat(solicitudResponseDto.getTimestamp()).isNotNull();
+
     }
 
     @Test
@@ -38,19 +37,6 @@ class SolicitudResponseDtoTest {
 
         // Assert
         assertThat(solicitudResponseDto.getIdPrestamo()).isEqualTo(idPrestamo);
-    }
-
-    @Test
-    @DisplayName("Debería establecer y obtener documento de identidad correctamente")
-    void deberiaEstablecerYObtenerDocumentoDeIdentidadCorrectamente() {
-        // Arrange
-        String documentoIdentidad = "12345678";
-
-        // Act
-        solicitudResponseDto.setDocumentoIdentidad(documentoIdentidad);
-
-        // Assert
-        assertThat(solicitudResponseDto.getDocumentoIdentidad()).isEqualTo(documentoIdentidad);
     }
 
     @Test
@@ -94,19 +80,16 @@ class SolicitudResponseDtoTest {
     void deberiaCrearObjetoCompletoConTodosLosCampos() {
         // Arrange
         Long idPrestamo = 123L;
-        String documentoIdentidad = "87654321";
         String email = "test@example.com";
         String mensaje = "Solicitud procesada exitosamente";
 
         // Act
         solicitudResponseDto.setIdPrestamo(idPrestamo);
-        solicitudResponseDto.setDocumentoIdentidad(documentoIdentidad);
         solicitudResponseDto.setEmail(email);
         solicitudResponseDto.setMensaje(mensaje);
 
         // Assert
         assertThat(solicitudResponseDto.getIdPrestamo()).isEqualTo(idPrestamo);
-        assertThat(solicitudResponseDto.getDocumentoIdentidad()).isEqualTo(documentoIdentidad);
         assertThat(solicitudResponseDto.getEmail()).isEqualTo(email);
         assertThat(solicitudResponseDto.getMensaje()).isEqualTo(mensaje);
         assertThat(solicitudResponseDto.getTimestamp()).isNotNull();

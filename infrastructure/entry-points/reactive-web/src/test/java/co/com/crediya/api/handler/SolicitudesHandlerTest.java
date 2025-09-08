@@ -1,11 +1,16 @@
 package co.com.crediya.api.handler;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
 import java.math.BigDecimal;
+
+import co.com.crediya.api.exceptions.BadRequestException;
+import co.com.crediya.consumer.FindUserByEmailResponseDto;
+import co.com.crediya.consumer.RestConsumer;
+import co.com.crediya.model.solicitud.SolicitudConTotalAprobadoUltimoMes;
+import co.com.crediya.usecase.obtenerlistadorevisionmanual.ObtenerListadoRevisionManualUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,12 +20,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.mock.web.reactive.function.server.MockServerRequest;
+import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import co.com.crediya.api.dto.SolicitudRequestDto;
 import co.com.crediya.model.logger.LoggerGateway;
 import co.com.crediya.model.solicitud.Solicitud;
 import co.com.crediya.usecase.enviarsolicitudprestamo.EnviarSolicitudPrestamoUseCase;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -34,10 +41,16 @@ class SolicitudesHandlerTest {
     private EnviarSolicitudPrestamoUseCase enviarSolicitudPrestamoUseCase;
 
     @Mock
+    private ObtenerListadoRevisionManualUseCase obtenerListadoRevisionManualUseCase;
+
+    @Mock
     private ObjectMapper objectMapper;
 
     @Mock
     private LoggerGateway loggerGateway;
+
+    @Mock
+    private RestConsumer restConsumer;
 
     @InjectMocks
     private SolicitudesHandler solicitudesHandler;
@@ -50,17 +63,15 @@ class SolicitudesHandlerTest {
     void setUp() {
         // Arrange - Datos de prueba
         solicitudRequestDto = new SolicitudRequestDto();
-        solicitudRequestDto.setDocumentoIdentidad("12345678");
         solicitudRequestDto.setMonto(new BigDecimal("50000"));
         solicitudRequestDto.setPlazo(12);
         solicitudRequestDto.setEmail("usuario@example.com");
         solicitudRequestDto.setIdTipoPrestamo(1L);
 
-        solicitud = new Solicitud(new BigDecimal("50000"), 12, "usuario@example.com", "12345678",
+        solicitud = new Solicitud(new BigDecimal("50000"), 12, "usuario@example.com",
                 1L, 1L);
 
-        solicitudGuardada = new Solicitud(1L, new BigDecimal("50000"), 12, "usuario@example.com",
-                "12345678", 1L, 1L);
+        solicitudGuardada = new Solicitud(1L, new BigDecimal("50000"), 12, "usuario@example.com", 1L, 1L);
     }
 
     @Test
@@ -88,6 +99,29 @@ class SolicitudesHandlerTest {
     }
 
     @Test
+    @DisplayName("Debería fallar con BadRequestException cuando los datos son inválidos")
+    void deberiaFallarConBadRequestCuandoLosDatosSonInvalidos() {
+        // Arrange
+        MockServerRequest request = MockServerRequest.builder()
+                .body(Mono.just(solicitudRequestDto));
+
+        // Simulamos que el validator encuentra errores
+        doAnswer(invocation -> {
+            Errors errors = invocation.getArgument(1);
+            errors.rejectValue("email", "invalid", "El email es obligatorio");
+            return null;
+        }).when(validator).validate(any(), any());
+
+        // Act
+        Mono<ServerResponse> response = solicitudesHandler.registroSolicitudPrestamo(request);
+
+        // Assert
+        StepVerifier.create(response)
+                .expectError(BadRequestException.class)
+                .verify();
+    }
+
+    @Test
     @DisplayName("Debería manejar error cuando el use case falla")
     void deberiaManejarErrorCuandoElUseCaseFalla() {
         // Arrange
@@ -112,13 +146,36 @@ class SolicitudesHandlerTest {
     @Test
     @DisplayName("Debería obtener listado de solicitudes")
     void deberiaObtenerListadoDeSolicitudes() {
-        /*
-         * // Arrange MockServerRequest request = MockServerRequest.builder().build();
-         * 
-         * // Act Mono<ServerResponse> response = solicitudesHandler.listadoSolicitudes(request);
-         * 
-         * // Assert StepVerifier.create(response) .assertNext(serverResponse -> {
-         * assertThat(serverResponse.statusCode().value()).isEqualTo(200); }) .verifyComplete();
-         */
+        // Arrange
+        String email = "usuario@example.com";
+        String token = "Bearer test-token";
+
+
+        FindUserByEmailResponseDto userResponse = new FindUserByEmailResponseDto();
+        userResponse.setName("Juan Perez");
+        userResponse.setBaseSalary(new BigDecimal("2000"));
+
+        SolicitudConTotalAprobadoUltimoMes solicitudConTotalAprobadoUltimoMes = new SolicitudConTotalAprobadoUltimoMes();
+        solicitudConTotalAprobadoUltimoMes.setEmail(email);
+
+        when(obtenerListadoRevisionManualUseCase.listSolicitudesAprobadasUltimoMes(anyString(), anyInt(), anyInt()))
+                .thenReturn(Flux.just(solicitudConTotalAprobadoUltimoMes));
+
+        when(restConsumer.getUserByEmail(anyString(), anyString()))
+                .thenReturn(Mono.just(userResponse));
+
+        MockServerRequest request = MockServerRequest.builder()
+                .header("Authorization", token)
+                .build();
+
+        // Act
+        Mono<ServerResponse> response = solicitudesHandler.listadoSolicitudes(request);
+
+        // Assert
+        StepVerifier.create(response)
+                .assertNext(serverResponse -> {
+                    assertThat(serverResponse.statusCode().value()).isEqualTo(200);
+                })
+                .verifyComplete();
     }
 }

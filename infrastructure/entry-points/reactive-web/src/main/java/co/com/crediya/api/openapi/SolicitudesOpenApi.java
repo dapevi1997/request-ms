@@ -3,6 +3,7 @@ package co.com.crediya.api.openapi;
 import co.com.crediya.api.dto.ErrorResponseDto;
 import co.com.crediya.api.dto.SolicitudRequestDto;
 import co.com.crediya.api.dto.SolicitudResponseDto;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.experimental.UtilityClass;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,6 +17,7 @@ import static org.springdoc.core.fn.builders.schema.Builder.schemaBuilder;
 @UtilityClass
 public class SolicitudesOpenApi {
     private final String CREATED_CODE = String.valueOf(HttpStatus.CREATED.value());
+    private final String SUCCES_CODE = String.valueOf(HttpStatus.OK.value());
     private final String BAD_REQUEST_CODE = String.valueOf(HttpStatus.BAD_REQUEST.value());
     private final String CONFLICT_CODE = String.valueOf(HttpStatus.CONFLICT.value());
     private final String INTERNAL_ERROR_CODE = String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -25,6 +27,7 @@ public class SolicitudesOpenApi {
                 .operationId("registroSolicitudPrestamo")
                 .tag("Solicitudes de préstamo")
                 .summary("Registrar una nueva solicitud de préstamo")
+                .security(org.springdoc.core.fn.builders.securityrequirement.Builder.securityRequirementBuilder().name("bearerAuth"))
 
                 // requestBody
                 .requestBody(requestBodyBuilder()
@@ -67,17 +70,14 @@ public class SolicitudesOpenApi {
                 .operationId("listadoSolicitudes")
                 .tag("Lista de solicitudes")
                 .summary("Obtener lista de solicitudes")
-
-                // requestBody
-                .requestBody(requestBodyBuilder()
-                        .required(true)
-                        .description("Json asociado a la request")
-                        .content(contentBuilder().mediaType(MediaType.APPLICATION_JSON_VALUE)
-                                .schema(schemaBuilder().implementation(SolicitudRequestDto.class))))
+                .parameter(org.springdoc.core.fn.builders.parameter.Builder.parameterBuilder().name("limit").in(ParameterIn.QUERY))
+                .parameter(org.springdoc.core.fn.builders.parameter.Builder.parameterBuilder().name("offset").in(ParameterIn.QUERY))
+                .parameter(org.springdoc.core.fn.builders.parameter.Builder.parameterBuilder().name("estado").in(ParameterIn.QUERY))
+                .security(org.springdoc.core.fn.builders.securityrequirement.Builder.securityRequirementBuilder().name("bearerAuth"))
 
                 // 201 Created
                 .response(responseBuilder()
-                        .responseCode(CREATED_CODE)
+                        .responseCode(SUCCES_CODE)
                         .description("Solicitud creada correctamente")
                         .content(contentBuilder().mediaType(MediaType.APPLICATION_JSON_VALUE)
                                 .schema(schemaBuilder().implementation(SolicitudResponseDto.class))))

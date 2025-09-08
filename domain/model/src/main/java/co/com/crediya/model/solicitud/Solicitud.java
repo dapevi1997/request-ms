@@ -10,16 +10,14 @@ public class Solicitud {
     private BigDecimal monto;
     private Integer plazo;
     private String email;
-    private String documentoIdentidad;
     private Long idEstado;
     private Long idTipoPrestamo;
     private LocalDate fechaCreacion;
 
     public Solicitud() {}
 
-    public Solicitud(BigDecimal monto, Integer plazo, String email, String documentoIdentidad, Long idEstado,
+    public Solicitud(BigDecimal monto, Integer plazo, String email, Long idEstado,
                      Long idTipoPrestamo) {
-        ValidacionesDominio.validarNoNullOVacio(documentoIdentidad, "El documento de identidad"); ;;
         ValidacionesDominio.validarNoNegativo(monto, "El monto");
         ValidacionesDominio.validarPositivo(plazo, "El plazo");
         ValidacionesDominio.validarEmail(email, "El email");
@@ -31,12 +29,10 @@ public class Solicitud {
         this.email = email;
         this.idEstado = idEstado;
         this.idTipoPrestamo = idTipoPrestamo;
-        this.documentoIdentidad = documentoIdentidad;
     }
 
-    public Solicitud(Long idSolicitud, BigDecimal monto, Integer plazo, String email, String documentoIdentidad, Long idEstado,
+    public Solicitud(Long idSolicitud, BigDecimal monto, Integer plazo, String email, Long idEstado,
                      Long idTipoPrestamo) {
-        this.documentoIdentidad = documentoIdentidad;
         ValidacionesDominio.validarPositivo(idSolicitud, "El ID de la solicitud");
         ValidacionesDominio.validarNoNegativo(monto, "El monto");
         ValidacionesDominio.validarPositivo(plazo, "El plazo");
@@ -98,14 +94,6 @@ public class Solicitud {
 
     public void setIdTipoPrestamo(Long idTipoPrestamo) {
         this.idTipoPrestamo = idTipoPrestamo;
-    }
-
-    public String getDocumentoIdentidad() {
-        return documentoIdentidad;
-    }
-
-    public void setDocumentoIdentidad(String documentoIdentidad) {
-        this.documentoIdentidad = documentoIdentidad;
     }
 
     public LocalDate getFechaCreacion() {

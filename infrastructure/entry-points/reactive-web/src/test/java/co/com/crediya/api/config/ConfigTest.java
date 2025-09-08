@@ -1,68 +1,110 @@
 package co.com.crediya.api.config;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.reactivecommons.utils.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.web.reactive.server.WebTestClient;
-import co.com.crediya.api.handler.SolicitudesHandler;
-import co.com.crediya.api.router.SolicitudesRouterRest;
-import co.com.crediya.api.security.ValidacionUsuarioCrearSolicitudPrestamoFilter;
-import co.com.crediya.model.logger.LoggerGateway;
-import co.com.crediya.usecase.enviarsolicitudprestamo.EnviarSolicitudPrestamoUseCase;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.cors.reactive.CorsWebFilter;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilterChain;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
-@ContextConfiguration(classes = {SolicitudesRouterRest.class, SolicitudesHandler.class,
-        ConfigTest.TestConfig.class})
-@WebFluxTest
-@Import({CorsConfig.class, SecurityHeadersConfig.class,
-        ValidacionUsuarioCrearSolicitudPrestamoFilter.class})
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
 class ConfigTest {
 
-    @Autowired
-    private WebTestClient webTestClient;
+    @Mock
+    private ServerWebExchange exchange;
+    @Mock
+    private WebFilterChain chain;
+    @Mock
+    private org.springframework.http.server.reactive.ServerHttpResponse response;
 
-    @TestConfiguration
-    static class TestConfig {
+    private CorsConfig corsConfig;
+    private SecurityHeadersConfig securityHeadersConfig;
 
-        @Bean
-        @Primary
-        public EnviarSolicitudPrestamoUseCase enviarSolicitudPrestamoUseCase() {
-            return Mockito.mock(EnviarSolicitudPrestamoUseCase.class);
-        }
-
-        @Bean
-        @Primary
-        public ObjectMapper objectMapper() {
-            return Mockito.mock(ObjectMapper.class);
-        }
-
-        @Bean
-        @Primary
-        public LoggerGateway loggerGateway() {
-            return Mockito.mock(LoggerGateway.class);
-        }
+    @BeforeEach
+    void setUp() {
+        corsConfig = new CorsConfig();
+        securityHeadersConfig = new SecurityHeadersConfig();
     }
 
     @Test
-    void corsConfigurationShouldAllowOrigins() {
-        webTestClient.get().uri("/api/v1/solicitud").exchange().expectStatus().isUnauthorized() // Esperamos
-                                                                                                // 401
-                                                                                                // porque
-                                                                                                // no
-                                                                                                // hay
-                                                                                                // autenticación
-                .expectHeader().exists("Cache-Control").expectHeader().exists("Pragma")
-                .expectHeader().exists("X-Content-Type-Options").expectHeader()
-                .exists("X-Frame-Options").expectHeader().exists("Referrer-Policy").expectHeader()
-                .valueEquals("X-Content-Type-Options", "nosniff").expectHeader()
-                .valueEquals("X-Frame-Options", "DENY").expectHeader()
-                .valueEquals("Referrer-Policy", "no-referrer");
+    void testCorsConfigCreation() {
+        assertNotNull(corsConfig);
     }
 
+    @Test
+    void testCorsWebFilterBean() {
+        // Arrange
+        String origins = "http://localhost:3000,http://localhost:8080";
+
+        // Act
+        CorsWebFilter corsWebFilter = corsConfig.corsWebFilter(origins);
+
+        // Assert
+        assertNotNull(corsWebFilter);
+    }
+
+    @Test
+    void testCorsWebFilterWithSingleOrigin() {
+        // Arrange
+        String origins = "http://localhost:3000";
+
+        // Act
+        CorsWebFilter corsWebFilter = corsConfig.corsWebFilter(origins);
+
+        // Assert
+        assertNotNull(corsWebFilter);
+    }
+
+    @Test
+    void testSecurityHeadersConfigCreation() {
+        assertNotNull(securityHeadersConfig);
+    }
+
+    @Test
+    void testSecurityHeadersFilter() {
+        // Arrange
+        HttpHeaders headers = new HttpHeaders();
+        when(exchange.getResponse()).thenReturn(response);
+        when(response.getHeaders()).thenReturn(headers);
+        when(chain.filter(exchange)).thenReturn(Mono.empty());
+
+        // Act
+        Mono<Void> result = securityHeadersConfig.filter(exchange, chain);
+
+        // Assert
+        StepVerifier.create(result).verifyComplete();
+
+        assertEquals("default-src 'self'; frame-ancestors 'self'; form-action 'self'",
+                headers.getFirst("Content-Security-Policy"));
+        assertEquals("max-age=31536000;", headers.getFirst("Strict-Transport-Security"));
+        assertEquals("nosniff", headers.getFirst("X-Content-Type-Options"));
+        assertEquals("", headers.getFirst("Server"));
+        assertEquals("no-store", headers.getFirst("Cache-Control"));
+        assertEquals("no-cache", headers.getFirst("Pragma"));
+        assertEquals("strict-origin-when-cross-origin", headers.getFirst("Referrer-Policy"));
+    }
+
+    @Test
+    void testSecurityHeadersFilterExecution() {
+        // Arrange
+        HttpHeaders headers = new HttpHeaders();
+        when(exchange.getResponse()).thenReturn(response);
+        when(response.getHeaders()).thenReturn(headers);
+        when(chain.filter(exchange)).thenReturn(Mono.empty());
+
+        // Act
+        securityHeadersConfig.filter(exchange, chain).block();
+
+        // Assert
+        assertFalse(headers.isEmpty());
+        assertEquals(7, headers.size());
+    }
 }

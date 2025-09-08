@@ -20,24 +20,10 @@ class SolicitudRequestDtoTest {
     @DisplayName("Debería crear SolicitudRequestDto con valores por defecto")
     void deberiaCrearSolicitudRequestDtoConValoresPorDefecto() {
         // Act & Assert
-        assertThat(solicitudRequestDto.getDocumentoIdentidad()).isNull();
         assertThat(solicitudRequestDto.getMonto()).isNull();
         assertThat(solicitudRequestDto.getPlazo()).isNull();
         assertThat(solicitudRequestDto.getEmail()).isNull();
         assertThat(solicitudRequestDto.getIdTipoPrestamo()).isNull();
-    }
-
-    @Test
-    @DisplayName("Debería establecer y obtener documento de identidad correctamente")
-    void deberiaEstablecerYObtenerDocumentoDeIdentidadCorrectamente() {
-        // Arrange
-        String documentoIdentidad = "12345678";
-
-        // Act
-        solicitudRequestDto.setDocumentoIdentidad(documentoIdentidad);
-
-        // Assert
-        assertThat(solicitudRequestDto.getDocumentoIdentidad()).isEqualTo(documentoIdentidad);
     }
 
     @Test
@@ -96,21 +82,18 @@ class SolicitudRequestDtoTest {
     @DisplayName("Debería crear objeto completo con todos los campos")
     void deberiaCrearObjetoCompletoConTodosLosCampos() {
         // Arrange
-        String documentoIdentidad = "87654321";
         BigDecimal monto = new BigDecimal("100000");
         Integer plazo = 24;
         String email = "test@example.com";
         Long idTipoPrestamo = 2L;
 
         // Act
-        solicitudRequestDto.setDocumentoIdentidad(documentoIdentidad);
         solicitudRequestDto.setMonto(monto);
         solicitudRequestDto.setPlazo(plazo);
         solicitudRequestDto.setEmail(email);
         solicitudRequestDto.setIdTipoPrestamo(idTipoPrestamo);
 
         // Assert
-        assertThat(solicitudRequestDto.getDocumentoIdentidad()).isEqualTo(documentoIdentidad);
         assertThat(solicitudRequestDto.getMonto()).isEqualTo(monto);
         assertThat(solicitudRequestDto.getPlazo()).isEqualTo(plazo);
         assertThat(solicitudRequestDto.getEmail()).isEqualTo(email);

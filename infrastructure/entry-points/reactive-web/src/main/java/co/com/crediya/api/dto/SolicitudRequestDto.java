@@ -17,12 +17,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SolicitudRequestDto implements Serializable {
-    @NotBlank(message = "El documento de identidad no puede estar vacío")
-    @NotNull(message = "El documento de identidad no puede ser nulo")
-    @JsonProperty("documento_identidad")
-    @Schema(description = "Documento de identidad del cliente", examples = "12345678")
-    private String documentoIdentidad;
-
     @JsonProperty("monto")
     @NotNull(message = "El campo monto no puede ser nulo")
     @DecimalMin(value = "0.01", message = "El monto debe ser mayor a cero")

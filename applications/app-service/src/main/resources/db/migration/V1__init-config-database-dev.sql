@@ -32,7 +32,6 @@ CREATE TABLE IF NOT EXISTS solicitud (
     monto DECIMAL(15,2) NOT NULL,
     plazo INT NOT NULL,
     email VARCHAR(255) NOT NULL,  -- Aumento tamaño para mayor flexibilidad
-    documento_identidad VARCHAR(255) NOT NULL,
     id_estado BIGINT NOT NULL,  -- Cambio a BIGINT
     id_tipo_prestamo BIGINT NOT NULL,  -- Cambio a BIGINT
     fecha_creacion DATE,
@@ -67,3 +66,22 @@ INSERT IGNORE INTO tipo_prestamo (id_tipo_prestamo, nombre, monto_minimo, monto_
 (3, 'VEHICULAR', 5000000.00, 150000000.00, 0.1150, true),
 (4, 'EDUCATIVO', 2000000.00, 100000000.00, 0.0950, true),
 (5, 'COMERCIAL', 10000000.00, 1000000000.00, 0.1580, false);
+
+INSERT IGNORE INTO solicitud (monto, plazo, email, id_estado, id_tipo_prestamo, fecha_creacion)
+VALUES
+(100.00, 24, 'andres.ramirez@example.com', 3, 1, '2025-09-02'),  -- PERSONAL (Aprobada)
+(100.00, 120, 'andres.ramirez@example.com', 3, 2, '2025-09-02'), -- HIPOTECARIO (Aprobada)
+(100.00, 48, 'andres.ramirez@example.com', 3, 3, '2025-09-02'), -- VEHICULAR (Aprobada)
+(200.00, 18, 'andres.ramirez@example.com', 1, 4, '2025-09-02');
+
+INSERT IGNORE INTO solicitud (monto, plazo, email, id_estado, id_tipo_prestamo, fecha_creacion)
+VALUES
+-- Aprobadas
+(100.00, 24, 'sofia.mendez@example.com', 3, 1, '2025-09-02'),  -- PERSONAL
+(100.00, 180, 'sofia.mendez@example.com', 3, 2, '2025-09-02'), -- HIPOTECARIO
+(100.00, 60, 'sofia.mendez@example.com', 3, 3, '2025-09-02'), -- VEHICULAR
+(100.00, 36, 'sofia.mendez@example.com', 3, 4, '2025-09-02'),  -- EDUCATIVO
+
+-- Pendientes de revisión
+(500.00, 24, 'sofia.mendez@example.com', 1, 1, '2025-09-02'),  -- PERSONAL
+(120.00, 48, 'sofia.mendez@example.com', 1, 5, '2025-09-02'); -- COMERCIAL

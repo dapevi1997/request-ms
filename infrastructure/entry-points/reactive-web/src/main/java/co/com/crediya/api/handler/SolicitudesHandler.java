@@ -1,11 +1,15 @@
 package co.com.crediya.api.handler;
 
+import co.com.crediya.api.dto.SolicitudListaPendientesRevisionResponseDto;
 import co.com.crediya.api.dto.SolicitudRequestDto;
 import co.com.crediya.api.dto.SolicitudResponseDto;
 import co.com.crediya.api.exceptions.BadRequestException;
+import co.com.crediya.consumer.RestConsumer;
 import co.com.crediya.model.logger.LoggerGateway;
 import co.com.crediya.model.solicitud.Solicitud;
 import co.com.crediya.usecase.enviarsolicitudprestamo.EnviarSolicitudPrestamoUseCase;
+import co.com.crediya.usecase.obtenerlistadorevisionmanual.ObtenerListadoRevisionManualUseCase;
+import lombok.RequiredArgsConstructor;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -21,18 +25,15 @@ import reactor.core.publisher.Mono;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class SolicitudesHandler {
     private final Validator validator;
     private final ObjectMapper objectMapper;
     private  final EnviarSolicitudPrestamoUseCase enviarSolicitudPrestamoUseCase;
+    private  final ObtenerListadoRevisionManualUseCase obtenerListadoRevisionManualUseCase;
     private final LoggerGateway loggerGateway;
+    private final RestConsumer restConsumer;
 
-    public SolicitudesHandler(Validator validator, ObjectMapper objectMapper, EnviarSolicitudPrestamoUseCase enviarSolicitudPrestamoUseCase, LoggerGateway loggerGateway) {
-        this.validator = validator;
-        this.objectMapper = objectMapper;
-        this.enviarSolicitudPrestamoUseCase = enviarSolicitudPrestamoUseCase;
-        this.loggerGateway = loggerGateway;
-    }
 
     public Mono<ServerResponse> registroSolicitudPrestamo(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(SolicitudRequestDto.class)
@@ -49,7 +50,6 @@ public class SolicitudesHandler {
                                     .builder()
                                     .idPrestamo(solicitud.getIdTipoPrestamo())
                                     .email(solicitud.getEmail())
-                                    .documentoIdentidad(solicitud.getDocumentoIdentidad())
                                     .mensaje("Solicitud creada correctamente").build());
                 });
     }
@@ -72,6 +72,33 @@ public class SolicitudesHandler {
     }
 
     public Mono<ServerResponse> listadoSolicitudes(ServerRequest serverRequest) {
-        return null;
+        String estado = serverRequest.queryParam("estado").orElse("PENDIENTE_DE_REVISION");
+        int limit = serverRequest.queryParam("limit").map(Integer::parseInt).orElse(10);
+        int offset = serverRequest.queryParam("offset").map(Integer::parseInt).orElse(0);
+        String token = serverRequest.headers().firstHeader("Authorization");
+
+        return obtenerListadoRevisionManualUseCase
+                .listSolicitudesAprobadasUltimoMes(estado, limit, offset)
+                .flatMapSequential(solicitud ->
+                        restConsumer.getUserByEmail(solicitud.getEmail(), token)
+                                .map(user -> SolicitudListaPendientesRevisionResponseDto.builder()
+                                        .email(solicitud.getEmail())
+                                        .monto(solicitud.getMonto())
+                                        .plazo(solicitud.getPlazo())
+                                        .tipoPrestamo(solicitud.getTipoPrestamo())
+                                        .totalMontoAprobadoUltimoMes(solicitud.getTotalMontoAprobadoUltimoMes())
+                                        .estado(solicitud.getEstado())
+                                        .tasaInteres(solicitud.getTasaInteres())
+                                        .nombreUsuario(user.getName())
+                                        .salarioBase(user.getBaseSalary())
+                                        .build()
+                                )
+                )
+                .collectList()
+                .flatMap(list ->
+                        ServerResponse.ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(list)
+                );
     }
 }

@@ -31,9 +31,6 @@ public class SolicitudEntity {
     @Column("email")
     private String email;
 
-    @Column("documento_identidad")
-    private String documentoIdentidad;
-
     @Column("id_estado")
     private Long idEstado;
 
