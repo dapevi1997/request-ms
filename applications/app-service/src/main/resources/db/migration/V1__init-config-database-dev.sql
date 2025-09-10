@@ -54,15 +54,15 @@ CREATE TABLE IF NOT EXISTS solicitud (
 -- Insertar datos iniciales para estados
 INSERT IGNORE INTO estados (id_estado, nombre, descripcion) VALUES
 (1, 'PENDIENTE_DE_REVISION', 'Solicitud pendiente de revisión'),
-(2, 'EN_REVISION', 'Solicitud en proceso de revisión'),
-(3, 'APROBADA', 'Solicitud aprobada'),
-(4, 'RECHAZADA', 'Solicitud rechazada'),
+(2, 'REVISION_MANUAL', 'Solicitud requiere revisión manual'),
+(3, 'APROBADO', 'Solicitud aprobada'),
+(4, 'RECHAZADO', 'Solicitud rechazada'),
 (5, 'CANCELADA', 'Solicitud cancelada por el usuario');
 
 -- Insertar datos iniciales para tipos de préstamo
 INSERT IGNORE INTO tipo_prestamo (id_tipo_prestamo, nombre, monto_minimo, monto_maximo, tasa_interes, validacion_automatica) VALUES
-(1, 'PERSONAL', 1000000.00, 50000000.00, 0.1250, true),
-(2, 'HIPOTECARIO', 20000000.00, 500000000.00, 0.0890, false),
+(1, 'PERSONAL', 1000000.00, 50000000.00, 0.10, true),
+(2, 'HIPOTECARIO', 20000000.00, 500000000.00, 0.10, false),
 (3, 'VEHICULAR', 5000000.00, 150000000.00, 0.1150, true),
 (4, 'EDUCATIVO', 2000000.00, 100000000.00, 0.0950, true),
 (5, 'COMERCIAL', 10000000.00, 1000000000.00, 0.1580, false);
@@ -85,3 +85,9 @@ VALUES
 -- Pendientes de revisión
 (500.00, 24, 'sofia.mendez@example.com', 1, 1, '2025-09-02'),  -- PERSONAL
 (120.00, 48, 'sofia.mendez@example.com', 1, 5, '2025-09-02'); -- COMERCIAL
+
+INSERT IGNORE INTO solicitud (monto, plazo, email, id_estado, id_tipo_prestamo, fecha_creacion)
+VALUES
+-- Aprobadas
+(100.00, 12, 'dapevi97@gmail.com', 3, 1, '2025-09-02'),  -- PERSONAL
+(100.00, 12, 'dapevi97@gmail.com', 3, 2, '2025-09-02'); -- HIPOTECARIO

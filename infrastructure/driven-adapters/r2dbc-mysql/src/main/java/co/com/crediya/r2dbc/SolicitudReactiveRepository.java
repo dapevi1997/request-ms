@@ -35,4 +35,6 @@ public interface SolicitudReactiveRepository extends ReactiveCrudRepository<Soli
     LIMIT :limit OFFSET :offset
     """)
     Flux<SolicitudPendienteAprobacionDto> findByEstadoFilter(String estado, int limit, int offset);
+
+    Flux<SolicitudEntity> findAllByEmail(String email);
 }

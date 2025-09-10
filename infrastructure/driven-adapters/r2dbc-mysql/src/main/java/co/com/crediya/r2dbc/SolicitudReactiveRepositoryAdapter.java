@@ -34,4 +34,11 @@ public class SolicitudReactiveRepositoryAdapter extends ReactiveAdapterOperation
                 .map(solicitudPendienteDto -> mapper.map(solicitudPendienteDto, SolicitudConTotalAprobadoUltimoMes.class))
                 .as(transactionalOperator::transactional);
     }
+
+    @Override
+    public Flux<Solicitud> findAllByEmail(String email) {
+        return repository.findAllByEmail(email)
+                .map(solicitudEntity -> mapper.map(solicitudEntity, Solicitud.class))
+                .as(transactionalOperator::transactional);
+    }
 }
