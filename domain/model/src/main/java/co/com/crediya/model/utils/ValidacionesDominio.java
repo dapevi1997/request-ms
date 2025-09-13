@@ -10,9 +10,6 @@ public class ValidacionesDominio {
     private static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
     private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
 
-    private ValidacionesDominio() {
-    }
-
     public static void validarNoNullOVacio(String value, String fieldName) {
         if (value == null || value.trim().isEmpty()) {
             throw new InvalidEntityException(fieldName + " no puede ser nulo o vacío");

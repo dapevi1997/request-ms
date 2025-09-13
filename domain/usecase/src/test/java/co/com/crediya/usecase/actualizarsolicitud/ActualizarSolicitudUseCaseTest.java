@@ -87,4 +87,29 @@ class ActualizarSolicitudUseCaseTest {
         verify(jsonMapperGateway).objetoAJsonString(any());
     }
 
+    @Test
+    void actualizarSolicitudRechazadoTest() {
+        // Arrange
+        Solicitud solicitud = new Solicitud();
+        solicitud.setIdSolicitud(1L);
+        solicitud.setEmail("nuevo@email.com");
+        solicitud.setIdEstado(2L);
+
+        Estado estado = new Estado();
+        estado.setIdEstado(2L);
+        estado.setNombre("RECHAZADO");
+
+        when(solicitudRepository.findById(anyLong())).thenReturn(Mono.just(solicitud));
+        when(estadosRepository.findById(anyLong())).thenReturn(Mono.just(estado));
+        when(solicitudRepository.save(any())).thenAnswer(invocation -> Mono.just(invocation.getArgument(0)));
+
+        // Act & Assert
+        StepVerifier.create(actualizarSolicitudUseCase.actualizarSolicitud(solicitud))
+                .expectNextMatches(s ->
+                        s.getEmail().equals("nuevo@email.com") &&
+                                s.getIdEstado() == 2L
+                )
+                .verifyComplete();
+    }
+
 }

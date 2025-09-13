@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.Test;
 import co.com.crediya.model.exceptions.InvalidEntityException;
 
@@ -17,10 +19,12 @@ class SolicitudTest {
         String email = "usuario@example.com";
         Long idEstado = 1L;
         Long idTipoPrestamo = 1L;
+        LocalDate fechaSolicitud = LocalDate.now();
 
         // Act
         Solicitud solicitud =
                 new Solicitud(monto, plazo, email, idEstado, idTipoPrestamo);
+        solicitud.setFechaCreacion(fechaSolicitud);
 
         // Assert
         assertNotNull(solicitud);
@@ -30,6 +34,7 @@ class SolicitudTest {
         assertEquals(idEstado, solicitud.getIdEstado());
         assertEquals(idTipoPrestamo, solicitud.getIdTipoPrestamo());
         assertNull(solicitud.getIdSolicitud());
+        assertNotNull(solicitud.getFechaCreacion());
     }
 
     @Test

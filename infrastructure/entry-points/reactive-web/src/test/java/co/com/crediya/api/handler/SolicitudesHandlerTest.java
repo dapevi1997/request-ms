@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 import java.math.BigDecimal;
 
 import co.com.crediya.api.exceptions.BadRequestException;
+import co.com.crediya.api.security.util.JwtService;
 import co.com.crediya.consumer.FindUserByEmailResponseDto;
 import co.com.crediya.consumer.RestConsumer;
 import co.com.crediya.model.solicitud.SolicitudConTotalAprobadoUltimoMes;
@@ -54,6 +55,9 @@ class SolicitudesHandlerTest {
 
     @Mock
     private RestConsumer restConsumer;
+
+    @Mock
+    private JwtService jwtService;
 
     @InjectMocks
     private SolicitudesHandler solicitudesHandler;

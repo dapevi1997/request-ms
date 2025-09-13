@@ -123,8 +123,8 @@ class SecurityConfigTest {
         assertThat(Roles.ASESOR).isNotNull();
         assertThat(Roles.CLIENT).isNotNull();
 
-        // Verificar que hay exactamente 3 roles
-        assertThat(Roles.values()).hasSize(3);
+        // Verificar que hay exactamente 4 roles
+        assertThat(Roles.values()).hasSize(4);
 
         // Verificar nombres de roles
         assertThat(Roles.ADMIN.name()).isEqualTo("ADMIN");
