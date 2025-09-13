@@ -35,7 +35,7 @@ public class SQSProcessor implements Function<Message, Mono<Void>> {
         try {
             dto = objectMapper.readValue(message.body(), BodyMensajeColaActualizarDto.class);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e); //TODO: refactorizar
+            throw new DomainException("Error parseando mensaje entrante: " + message.body());
         }
 
         Solicitud solicitud = new Solicitud(
