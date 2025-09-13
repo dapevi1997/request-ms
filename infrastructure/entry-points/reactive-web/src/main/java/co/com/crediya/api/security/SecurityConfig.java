@@ -82,6 +82,7 @@ public class SecurityConfig {
                         .pathMatchers("/actuator/health").permitAll()
                         .pathMatchers(HttpMethod.POST, Constantes.URL_SOLICITAR_CREDITO).hasAnyRole(CLIENT.name())
                         .pathMatchers(HttpMethod.GET, Constantes.URL_SOLICITAR_CREDITO).hasAnyRole(ASESOR.name())
+                        .pathMatchers(HttpMethod.PUT, Constantes.URL_SOLICITAR_CREDITO).hasAnyRole(ASESOR.name())
                         .anyExchange().authenticated()
                 )
                 .build();

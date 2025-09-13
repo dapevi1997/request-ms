@@ -7,6 +7,7 @@ public record SQSSenderProperties(
      String region,
      String queueUrl,
      String queueCapacidadUrl,
+     String queueAprobadosUrl,
      String endpoint,
      String accessKeyId,
      String secretAccessKey){

@@ -2,13 +2,16 @@ package co.com.crediya.api.handler;
 
 import co.com.crediya.api.dto.*;
 import co.com.crediya.api.exceptions.BadRequestException;
+import co.com.crediya.api.security.util.JwtService;
+import co.com.crediya.api.security.util.UserDetailsInternalService;
 import co.com.crediya.api.util.Constantes;
 import co.com.crediya.api.util.CustomMapperReactiveWeb;
-import co.com.crediya.api.util.JsonMapper;
 import co.com.crediya.consumer.RestConsumer;
 import co.com.crediya.model.estado.gateways.EstadosRepository;
 import co.com.crediya.model.exceptions.DomainException;
+import co.com.crediya.model.exceptions.JsonMapperException;
 import co.com.crediya.model.logger.LoggerGateway;
+import co.com.crediya.model.mensajesender.JsonMapperGateway;
 import co.com.crediya.model.solicitud.Solicitud;
 import co.com.crediya.model.solicitud.gateways.SolicitudRepository;
 import co.com.crediya.model.tipoprestamo.TipoPrestamo;
@@ -17,7 +20,6 @@ import co.com.crediya.sqs.sender.SQSSender;
 import co.com.crediya.usecase.actualizarsolicitud.ActualizarSolicitudUseCase;
 import co.com.crediya.usecase.enviarsolicitudprestamo.EnviarSolicitudPrestamoUseCase;
 import co.com.crediya.usecase.obtenerlistadorevisionmanual.ObtenerListadoRevisionManualUseCase;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -45,14 +47,15 @@ public class SolicitudesHandler {
     private final RestConsumer restConsumer;
     private final ActualizarSolicitudUseCase actualizarSolicitudUseCase;
     private final SQSSender sqsSender;
-    private final JsonMapper jsonMapper;
+    private final JsonMapperGateway jsonMapperGateway;
     private final EstadosRepository estadosRepository;
     private final TipoPrestamoRepository tipoPrestamoRepository;
     private final SolicitudRepository solicitudRepository;
+    private final JwtService jwtService;
 
 
     public Mono<ServerResponse> registroSolicitudPrestamo(ServerRequest serverRequest) {
-        String token = serverRequest.headers().firstHeader("Authorization");
+        String token = generateTokenInternalService();
 
         return serverRequest.bodyToMono(SolicitudRequestDto.class)
                 .doOnError(error -> loggerGateway.error("Error al leer el cuerpo de la solicitud: {}", error.getMessage()))
@@ -62,7 +65,9 @@ public class SolicitudesHandler {
                 .flatMap(solicitud -> buildColaRequest(solicitud, token)
                         .flatMap(requestDto -> toJson(requestDto)
                                 .flatMap(json -> sqsSender.send("colaCapacidadEndeudamiento", json))
-                                .thenReturn(solicitud)))
+                                .thenReturn(solicitud))
+                        .switchIfEmpty(Mono.just(solicitud))
+                )
                 .flatMap(solicitud -> ServerResponse.status(HttpStatus.CREATED)
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(SolicitudResponseDto
@@ -70,6 +75,10 @@ public class SolicitudesHandler {
                                 .idPrestamo(solicitud.getIdTipoPrestamo())
                                 .email(solicitud.getEmail())
                                 .mensaje("Solicitud creada correctamente").build()));
+    }
+
+    private String generateTokenInternalService() {
+        return "Bearer " + jwtService.generateToken(new UserDetailsInternalService());
     }
 
     private <T> Mono<T> validateRequestsDtos(T request) {
@@ -111,8 +120,8 @@ public class SolicitudesHandler {
 
     private Mono<String> toJson(Object object) {
         try {
-            return Mono.just(jsonMapper.convertirObjetoAJson(object));
-        } catch (JsonProcessingException e) {
+            return Mono.just(jsonMapperGateway.objetoAJsonString(object));
+        } catch (JsonMapperException e) {
             return Mono.error(e);
         }
     }
@@ -159,7 +168,7 @@ public class SolicitudesHandler {
                 .doOnSuccess(solicitud -> loggerGateway.info("Solicitud {} actualizada en base de datos", solicitud.getIdSolicitud()))
                 .flatMap(solicitud -> estadosRepository.findById(solicitud.getIdEstado())
                         .switchIfEmpty(Mono.error(new DomainException("No existe estados en base de datos con id " + solicitud.getIdEstado())))
-                        .flatMap(estado -> Mono.fromCallable(() -> jsonMapper.convertirObjetoAJson(NotificacionEstadoSqsDto.builder()
+                        .flatMap(estado -> Mono.fromCallable(() -> jsonMapperGateway.objetoAJsonString(NotificacionEstadoSqsDto.builder()
                                 .mensaje(estado.getDescripcion())
                                 .estado(estado.getNombre())
                                 .correo(solicitud.getEmail()).build())))

@@ -1,0 +1,7 @@
+dependencies {
+    implementation project(':model')
+    implementation 'org.springframework:spring-context'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.20.0'
+    implementation 'org.projectlombok:lombok:1.18.38'
+    annotationProcessor "org.projectlombok:lombok:1.18.34"
+}

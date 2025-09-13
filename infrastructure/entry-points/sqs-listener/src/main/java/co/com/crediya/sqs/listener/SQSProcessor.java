@@ -4,6 +4,7 @@ import co.com.crediya.model.estado.gateways.EstadosRepository;
 import co.com.crediya.model.exceptions.DomainException;
 import co.com.crediya.model.solicitud.Solicitud;
 import co.com.crediya.sqs.listener.helper.BodyMensajeColaActualizarDto;
+import co.com.crediya.sqs.listener.util.Constantes;
 import co.com.crediya.usecase.actualizarsolicitud.ActualizarSolicitudUseCase;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.stereotype.Service;
@@ -29,13 +30,12 @@ public class SQSProcessor implements Function<Message, Mono<Void>> {
 
     @Override
     public Mono<Void> apply(Message message) {
-        System.out.println(message.body());
 
         BodyMensajeColaActualizarDto dto = null;
         try {
             dto = objectMapper.readValue(message.body(), BodyMensajeColaActualizarDto.class);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e); //TODO: refactorizar
         }
 
         Solicitud solicitud = new Solicitud(
@@ -49,10 +49,11 @@ public class SQSProcessor implements Function<Message, Mono<Void>> {
         solicitud.setFechaCreacion(dto.getFechaCreacion());
 
         return estadosRepository.findByNombre(dto.getEstadoSolicitud())
-                .switchIfEmpty(Mono.error(new DomainException("Estado no encontrado")))
+                .switchIfEmpty(Mono.error(new DomainException(Constantes.MensajesError.ESTADO_NO_ENCONTRADO)))
                 .flatMap(estado -> {
                     solicitud.setIdEstado(estado.getIdEstado());
                     return actualizarSolicitudUseCase.actualizarSolicitud(solicitud);
-                }).then();
+                })
+                .then();
     }
 }

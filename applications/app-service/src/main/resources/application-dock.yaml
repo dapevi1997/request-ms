@@ -58,6 +58,7 @@ adapter:
     region: ${SQS_REGION}
     queueUrl: ${SQS_QUEUE_URL}
     queueCapacidadUrl: ${SQS_QUEUE_CAPACIDAD_URL}
+    queueAprobadosUrl: ${SQS_QUEUE_APROBADOS_URL}
     #endpoint: "http://localhost:4566"
     accessKeyId: ${AWS_ACCESS_KEY_ID}
     secretAccessKey: ${AWS_SECRET_ACCESS_KEY}
