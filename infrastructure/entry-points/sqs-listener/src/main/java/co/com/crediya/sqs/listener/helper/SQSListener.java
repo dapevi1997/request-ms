@@ -1,0 +1,116 @@
+package co.com.crediya.sqs.listener.helper;
+
+import co.com.crediya.sqs.listener.config.SQSProperties;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+import software.amazon.awssdk.services.sqs.SqsAsyncClient;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
+import software.amazon.awssdk.services.sqs.model.Message;
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Function;
+
+public class SQSListener {
+    private static final org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(SQSListener.class);
+    private final SqsAsyncClient client;
+    private final SQSProperties properties;
+    private final Function<Message, Mono<Void>> processor;
+    private String operation;
+
+    public SQSListener(final SqsAsyncClient client, final SQSProperties properties, final Function<Message, Mono<Void>> processor) {
+        this.client = client;
+        this.properties = properties;
+        this.processor = processor;
+    }
+
+    public SQSListener start() {
+        this.operation = "MessageFrom:" + properties.queueUrl();
+        ExecutorService service = Executors.newFixedThreadPool(properties.numberOfThreads());
+        Flux<Void> flow = listenRetryRepeat().publishOn(Schedulers.fromExecutorService(service));
+        for (var i = 0; i < properties.numberOfThreads(); i++) {
+            flow.subscribe();
+        }
+        return this;
+    }
+
+    private Flux<Void> listenRetryRepeat() {
+        return listen()
+                .doOnError(e -> log.error("Error listening sqs queue", e))
+                .repeat();
+    }
+
+    private Flux<Void> listen() {
+        return getMessages()
+                .flatMap(message -> processor.apply(message)
+                        .name("async_operation")
+                        .tag("operation", operation)
+                        .metrics()
+                        .then(confirm(message)))
+                .onErrorContinue((e, o) -> log.error("Error listening sqs message", e));
+    }
+
+    private Mono<Void> confirm(Message message) {
+        return Mono.fromCallable(() -> getDeleteMessageRequest(message.receiptHandle()))
+                .flatMap(request -> Mono.fromFuture(client.deleteMessage(request)))
+                .then();
+    }
+
+    private Flux<Message> getMessages() {
+        return Mono.fromCallable(this::getReceiveMessageRequest)
+                .flatMap(request -> Mono.fromFuture(client.receiveMessage(request)))
+                .doOnNext(response -> log.debug("{} received messages from sqs", response.messages().size()))
+                .flatMapMany(response -> Flux.fromIterable(response.messages()));
+    }
+
+    private ReceiveMessageRequest getReceiveMessageRequest() {
+        return ReceiveMessageRequest.builder()
+                .queueUrl(properties.queueUrl())
+                .maxNumberOfMessages(properties.maxNumberOfMessages())
+                .waitTimeSeconds(properties.waitTimeSeconds())
+                .visibilityTimeout(properties.visibilityTimeoutSeconds())
+                .build();
+    }
+
+    private DeleteMessageRequest getDeleteMessageRequest(String receiptHandle) {
+        return DeleteMessageRequest.builder()
+                .queueUrl(properties.queueUrl())
+                .receiptHandle(receiptHandle)
+                .build();
+    }
+
+    public static class SQSListenerBuilder {
+        private SqsAsyncClient client;
+        private SQSProperties properties;
+        private Function<Message, Mono<Void>> processor;
+
+        SQSListenerBuilder() {
+        }
+
+        public SQSListener.SQSListenerBuilder client(final SqsAsyncClient client) {
+            this.client = client;
+            return this;
+        }
+
+        public SQSListener.SQSListenerBuilder properties(final SQSProperties properties) {
+            this.properties = properties;
+            return this;
+        }
+
+        public SQSListener.SQSListenerBuilder processor(final Function<Message, Mono<Void>> processor) {
+            this.processor = processor;
+            return this;
+        }
+
+        public SQSListener build() {
+            return new SQSListener(this.client, this.properties, this.processor);
+        }
+
+    }
+
+    public static SQSListener.SQSListenerBuilder builder() {
+        return new SQSListener.SQSListenerBuilder();
+    }
+}
