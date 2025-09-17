@@ -21,6 +21,7 @@ public class FlywayConfig {
                     .locations("classpath:db/migration")
                     .baselineOnMigrate(true)
                     .baselineVersion("0")
+                    .connectRetries(5)
                     .schemas(properties.database())
                     .load();
 

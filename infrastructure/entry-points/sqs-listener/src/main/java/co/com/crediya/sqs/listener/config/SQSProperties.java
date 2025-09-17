@@ -7,8 +7,6 @@ public record SQSProperties(
         String region,
         String endpoint,
         String queueUrl,
-        String accessKeyId,
-        String secretAccessKey,
         int waitTimeSeconds,
         int visibilityTimeoutSeconds,
         int maxNumberOfMessages,

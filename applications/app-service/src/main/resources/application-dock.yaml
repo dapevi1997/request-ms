@@ -41,14 +41,11 @@ adapters:
     port: ${R2DBC_PORT}
     database: "solicitudes"
     schema: "V1__init-config-database-dev.sql"
-    username: ${R2DBC_USERNAME}
-    password: ${R2DBC_PASSWORD}
 flyway:
   enabled: true
   baseline-on-migrate: true
   locations: "classpath:db/migration"
 jwt:
-  secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION}
 adapter:
   restconsumer:
@@ -60,8 +57,6 @@ adapter:
     queueCapacidadUrl: ${SQS_QUEUE_CAPACIDAD_URL}
     queueAprobadosUrl: ${SQS_QUEUE_APROBADOS_URL}
     #endpoint: "http://localhost:4566"
-    accessKeyId: ${AWS_ACCESS_KEY_ID}
-    secretAccessKey: ${AWS_SECRET_ACCESS_KEY}
 resilience4j:
   circuitbreaker:
     instances:
@@ -88,9 +83,9 @@ entrypoint:
     region: ${REGION_SQS_ENTRY}
     #endpoint: "http://localhost:4566"
     queueUrl: ${QUEUE_URL_ENTRY}
-    accessKeyId: ${ACCESS_KEY_ID_ENTRY}
-    secretAccessKey: ${SECRET_ACCESS_KEY_ENTRY}
     waitTimeSeconds: 20
     maxNumberOfMessages: 10
     visibilityTimeoutSeconds: 10
     numberOfThreads: 1
+aws:
+  region: ${AWS_REGION_SECRET}
