@@ -30,7 +30,7 @@ routes:
     actualizarSolicitud: "/api/v1/solicitud"
 springdoc:
   swagger-ui:
-    path: "/swagger-docs"
+    path: "/api/v1/request/swagger-docs"
   api-docs:
     path: "/api-docs"
     groups:
