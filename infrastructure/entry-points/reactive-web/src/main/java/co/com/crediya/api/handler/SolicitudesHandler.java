@@ -139,6 +139,7 @@ public class SolicitudesHandler {
                                 .map(user -> SolicitudListaPendientesRevisionResponseDto.builder()
                                         .email(solicitud.getEmail())
                                         .monto(solicitud.getMonto())
+                                        .fechaCreacion(solicitud.getFechaCreacion())
                                         .plazo(solicitud.getPlazo())
                                         .tipoPrestamo(solicitud.getTipoPrestamo())
                                         .totalMontoAprobadoUltimoMes(solicitud.getTotalMontoAprobadoUltimoMes())

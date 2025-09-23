@@ -2,6 +2,7 @@ package co.com.crediya.r2dbc.config;
 
 import io.asyncer.r2dbc.mysql.MySqlConnectionConfiguration;
 import io.asyncer.r2dbc.mysql.MySqlConnectionFactory;
+import io.asyncer.r2dbc.mysql.constant.SslMode;
 import io.r2dbc.pool.ConnectionPool;
 import io.r2dbc.pool.ConnectionPoolConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +24,7 @@ public class MySqlConnectionPool {
                 .database(properties.database())
                 .username(properties.username())
                 .password(properties.password())
+                .sslMode(SslMode.DISABLED)
                 .createDatabaseIfNotExist(true)
                 .connectTimeout(Duration.ofSeconds(15))
                 .build();

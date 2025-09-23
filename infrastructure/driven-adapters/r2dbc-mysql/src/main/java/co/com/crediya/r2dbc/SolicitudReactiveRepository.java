@@ -13,6 +13,7 @@ public interface SolicitudReactiveRepository extends ReactiveCrudRepository<Soli
         s.email AS email,
         s.monto AS monto,
         s.plazo AS plazo,
+        s.fecha_creacion AS fecha_creacion,
         COALESCE(aprobadas.total_aprobado, 0) AS total_ultimos_30_dias,
         tp.nombre AS nombre_tipo_prestamo,
         tp.tasa_interes AS tasa_interes,

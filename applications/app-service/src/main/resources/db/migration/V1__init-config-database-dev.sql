@@ -69,25 +69,7 @@ INSERT IGNORE INTO tipo_prestamo (id_tipo_prestamo, nombre, monto_minimo, monto_
 
 INSERT IGNORE INTO solicitud (monto, plazo, email, id_estado, id_tipo_prestamo, fecha_creacion)
 VALUES
-(100.00, 24, 'andres.ramirez@example.com', 3, 1, '2025-09-02'),  -- PERSONAL (Aprobada)
-(100.00, 120, 'andres.ramirez@example.com', 3, 2, '2025-09-02'), -- HIPOTECARIO (Aprobada)
-(100.00, 48, 'andres.ramirez@example.com', 3, 3, '2025-09-02'), -- VEHICULAR (Aprobada)
-(200.00, 18, 'andres.ramirez@example.com', 1, 4, '2025-09-02');
-
-INSERT IGNORE INTO solicitud (monto, plazo, email, id_estado, id_tipo_prestamo, fecha_creacion)
-VALUES
--- Aprobadas
-(100.00, 24, 'sofia.mendez@example.com', 3, 1, '2025-09-02'),  -- PERSONAL
-(100.00, 180, 'sofia.mendez@example.com', 3, 2, '2025-09-02'), -- HIPOTECARIO
-(100.00, 60, 'sofia.mendez@example.com', 3, 3, '2025-09-02'), -- VEHICULAR
-(100.00, 36, 'sofia.mendez@example.com', 3, 4, '2025-09-02'),  -- EDUCATIVO
-
--- Pendientes de revisión
-(500.00, 24, 'sofia.mendez@example.com', 1, 1, '2025-09-02'),  -- PERSONAL
-(120.00, 48, 'sofia.mendez@example.com', 1, 5, '2025-09-02'); -- COMERCIAL
-
-INSERT IGNORE INTO solicitud (monto, plazo, email, id_estado, id_tipo_prestamo, fecha_creacion)
-VALUES
--- Aprobadas
-(100.00, 12, 'dapevi97@gmail.com', 3, 1, '2025-09-02'),  -- PERSONAL
-(100.00, 12, 'dapevi97@gmail.com', 3, 2, '2025-09-02'); -- HIPOTECARIO
+(100.00, 24, 'dapevi97@gmail.com', 3, 1, '2025-09-22'),  -- PERSONAL (Aprobada)
+(100.00, 120, 'dapevi97@gmail.com', 3, 2, '2025-09-22'), -- HIPOTECARIO (Aprobada)
+(120.00, 48, 'dapevi97@gmail.com', 1, 5, '2025-09-22'), -- COMERCIAL Pendiente de revisión
+(100.00, 12, 'dapevi97@gmail.com', 4, 5, '2025-09-22');  -- COMERCIAL RECHAZADO

@@ -19,8 +19,7 @@ import org.springframework.web.reactive.result.view.ViewResolver;
 
 import java.util.List;
 
-import static co.com.crediya.api.security.util.Roles.ASESOR;
-import static co.com.crediya.api.security.util.Roles.CLIENT;
+import static co.com.crediya.api.security.util.Roles.*;
 
 
 @Configuration
@@ -81,7 +80,7 @@ public class SecurityConfig {
                         .pathMatchers("/api/v1/request/swagger-docs/**", "/api/v1/request/api-docs/**", "/webjars/**", "/api/v1/request/swagger-ui/**").permitAll()
                         .pathMatchers("/actuator/health").permitAll()
                         .pathMatchers(HttpMethod.POST, Constantes.URL_SOLICITAR_CREDITO).hasAnyRole(CLIENT.name())
-                        .pathMatchers(HttpMethod.GET, Constantes.URL_SOLICITAR_CREDITO).hasAnyRole(ASESOR.name())
+                        .pathMatchers(HttpMethod.GET, Constantes.URL_SOLICITAR_CREDITO).hasAnyRole(ASESOR.name(), INTERNAL_SERVICE.name())
                         .pathMatchers(HttpMethod.PUT, Constantes.URL_SOLICITAR_CREDITO).hasAnyRole(ASESOR.name())
                         .anyExchange().authenticated()
                 )

@@ -5,6 +5,7 @@ import org.springframework.data.relational.core.mapping.Column;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,4 +24,6 @@ public class SolicitudPendienteAprobacionDto implements Serializable {
     private BigDecimal totalMontoAprobadoUltimoMes;
     @Column("tasa_interes")
     private BigDecimal tasaInteres;
+    @Column("fecha_creacion")
+    private LocalDate fechaCreacion;
 }

@@ -37,6 +37,6 @@ jar {
 
 bootJar {
     // Sets output jar name
-    //destinationDirectory = layout.settingsDirectory.dir("deployment")
+    destinationDirectory = layout.settingsDirectory.dir("deployment")
     archiveFileName = "${project.getParent().getName()}.${archiveExtension.get()}"
 }

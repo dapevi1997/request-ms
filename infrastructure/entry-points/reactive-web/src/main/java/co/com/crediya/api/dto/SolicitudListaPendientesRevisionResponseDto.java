@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Schema(description = "DTO para solicitar un préstamo")
 @Getter
@@ -24,4 +25,5 @@ public class SolicitudListaPendientesRevisionResponseDto implements Serializable
     private BigDecimal tasaInteres;
     private String nombreUsuario;
     private BigDecimal salarioBase;
+    private LocalDate fechaCreacion;
 }
