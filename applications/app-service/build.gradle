@@ -1,6 +1,7 @@
 apply plugin: 'org.springframework.boot'
 
 dependencies {
+	implementation 'com.github.bancolombia:aws-secrets-manager-async:4.4.34'
 	implementation project(':json-mapper')
 	implementation project(':sqs-listener')
 	implementation project(':sqs-sender')
@@ -36,6 +37,6 @@ jar {
 
 bootJar {
     // Sets output jar name
-    destinationDirectory = layout.settingsDirectory.dir("deployment")
+    //destinationDirectory = layout.settingsDirectory.dir("deployment")
     archiveFileName = "${project.getParent().getName()}.${archiveExtension.get()}"
 }
